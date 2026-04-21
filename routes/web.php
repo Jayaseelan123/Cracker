@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FrontController;
@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\AdminEnquiryController;
 
 
 // ----------------------------
@@ -80,6 +81,9 @@ Route::resource('products', ProductController::class)->middleware('auth');
 
 // Admin orders
 Route::get('/admin/orders', [OrderController::class, 'index'])->middleware('auth')->name('orders.index');
+Route::get('/admin/direct-enquiry', [AdminEnquiryController::class, 'directEnquiry'])->middleware('auth')->name('admin.direct.enquiry');
+Route::post('/admin/direct-enquiry', [AdminEnquiryController::class, 'storeDirect'])->middleware('auth')->name('admin.direct.enquiry.store');
+Route::get('/admin/enquiry-customer', [AdminEnquiryController::class, 'enquiryCustomer'])->middleware('auth')->name('admin.enquiry.customer');
 Route::post('/admin/orders/{order}/status', [OrderController::class, 'updateStatus'])->middleware('auth')->name('orders.status');
 // View order details
 Route::get('/admin/orders/view/{id}', [OrderController::class, 'view'])->middleware('auth')->name('admin.orders.view');

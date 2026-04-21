@@ -39,21 +39,30 @@
         <img class="logo" src="/logo.png" alt="logo">
 
         <ul class="admin-nav">
-          <li><a class="active" href="{{ route('admin.dashboard') }}">
-            <span>🟣</span>
-            <span>Dashboard</span>
-          </a></li>
           <li><a href="{{ route('category.index') }}"><span>Categories</span></a></li>
           <li><a href="{{ route('products.index') }}"><span>Products</span></a></li>
           <li class="nav-item">
-    <a href="{{ route('orders.index') }}" class="nav-link {{ request()->routeIs('orders.*') ? 'active' : '' }}">
-        <i class="fa fa-shopping-cart me-2"></i>
-        Orders
-    </a>
-</li>
-          <li><a href="#"><span>Orders List</span></a></li>
-          <li><a href="#"><span>Contact</span></a></li>
-          <li><a href="#"><span>Delivery Address</span></a></li>
+            <a href="{{ route('orders.index') }}" class="nav-link {{ request()->routeIs('orders.index') ? 'active' : '' }}">
+                <i class="fa fa-shopping-cart me-2"></i>
+                Orders
+            </a>
+          </li>
+          <li><a class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
+            <span>🟣</span>
+            <span>Dashboard</span>
+          </a></li>
+          <li class="nav-item">
+            <a href="{{ route('admin.direct.enquiry') }}" class="nav-link {{ request()->routeIs('admin.direct.enquiry') ? 'active' : '' }}">
+                <i class="fas fa-paper-plane me-2"></i>
+                Direct Enquiry
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ route('admin.enquiry.customer') }}" class="nav-link {{ request()->routeIs('admin.enquiry.customer') ? 'active' : '' }}">
+                <i class="fas fa-users me-2"></i>
+                Enquiry Customer
+            </a>
+          </li>
         </ul>
 
         <a class="download-btn" href="#">Download Catalog PDF</a>
