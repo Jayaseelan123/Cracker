@@ -23,6 +23,12 @@
     <div class="p-3 text-center fw-bold text-purple border-bottom">
         <i class="fas fa-fire"></i> CRACKERS ADMIN
     </div>
+    <li class="nav-item">
+        <a href="{{ Route::has('admin.dashboard') ? route('admin.dashboard') : '#' }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+            <i class="fas fa-tachometer-alt me-2"></i>
+            Dashboard
+        </a>
+    </li>
     <a href="{{ Route::has('category.index') ? route('category.index') : '#' }}" class="{{ request()->routeIs('category.*') ? 'active' : '' }}"><i class="fas fa-list me-2"></i> Categories</a>
     <li class="nav-item">
         <a href="{{ route('products.index') }}" class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}">
@@ -35,12 +41,6 @@
         <a href="{{ route('orders.index') }}" class="nav-link {{ request()->routeIs('orders.index') ? 'active' : '' }}">
             <i class="fa fa-shopping-cart me-2"></i>
             Orders
-        </a>
-    </li>
-    <li class="nav-item">
-        <a href="{{ Route::has('admin.dashboard') ? route('admin.dashboard') : '#' }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-            <i class="fas fa-tachometer-alt me-2"></i>
-            Dashboard
         </a>
     </li>
     <li class="nav-item">

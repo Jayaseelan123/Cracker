@@ -93,4 +93,53 @@ class AdminEnquiryController extends Controller
         $orders = $query->latest()->paginate(15);
         return view('admin.enquiry.customer', compact('orders'));
     }
+    public function exportCustomer(Request $request)
+    {
+        $query = Order::query();
+
+        if ($request->has('search')) {
+            $search = $request->get('search');
+            $query->where(function($q) use ($search) {
+                $q->where('customer_name', 'LIKE', "%{$search}%")
+                  ->orWhere('customer_phone', 'LIKE', "%{$search}%")
+                  ->orWhere('order_number', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $orders = $query->latest()->get();
+
+        $fileName = 'customer_enquiries_' . date('Y-m-d') . '.csv';
+
+        $headers = array(
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        );
+
+        $callback = function() use($orders) {
+            $file = fopen('php://output', 'w');
+            
+            // CSV Header
+            fputcsv($file, ['Order ID', 'Date', 'Time', 'Customer Name', 'Phone', 'Status', 'Total Amount']);
+
+            // CSV Data
+            foreach ($orders as $order) {
+                fputcsv($file, [
+                    $order->order_number ?? $order->id,
+                    $order->created_at ? $order->created_at->format('Y-m-d') : 'N/A',
+                    $order->created_at ? $order->created_at->format('h:i A') : 'N/A',
+                    $order->customer_name,
+                    $order->customer_phone,
+                    $order->status ?? 'Received',
+                    $order->total_amount
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

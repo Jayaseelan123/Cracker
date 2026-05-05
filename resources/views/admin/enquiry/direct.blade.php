@@ -211,41 +211,59 @@
 
 <style>
     :root {
-        --primary-color: #6366f1;
+        --primary-color: #4f46e5;
+        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
         --secondary-bg: #f8fafc;
         --border-color: #e2e8f0;
     }
 
     body {
-        background-color: #f1f5f9;
+        background-color: #f4f7fe;
         color: #334155;
     }
 
-    .btn-primary {
-        background-color: var(--primary-color);
-        border-color: var(--primary-color);
+    .card {
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05) !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     
-    .btn-primary:hover {
-        background-color: #4f46e5;
-        border-color: #4f46e5;
+    .card-header {
+        border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+    }
+
+    .bg-primary {
+        background: var(--primary-gradient) !important;
     }
 
     .text-primary {
         color: var(--primary-color) !important;
     }
 
-    .bg-primary {
-        background-color: var(--primary-color) !important;
+    .btn-primary {
+        background: var(--primary-gradient);
+        border: none;
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
     }
 
-    .card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    .form-control, .form-select {
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
     }
 
     .form-control:focus, .form-select:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.1);
+        background-color: #fff;
+        border-color: #818cf8;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
     }
 
     .table thead th {
@@ -254,7 +272,16 @@
         letter-spacing: 0.05em;
         font-weight: 700;
         color: #64748b;
+        background: #f8fafc;
         border-top: none;
+        border-bottom: 2px solid #e2e8f0;
+        padding: 1rem;
+    }
+
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #f1f5f9;
     }
 
     .bg-soft-info {
@@ -262,21 +289,22 @@
     }
     
     .text-info {
-        color: #0ea5e9 !important;
+        color: #0284c7 !important;
     }
 
     .btn-icon {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         padding: 0;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border-radius: 6px;
+        border-radius: 8px;
+        transition: all 0.2s;
     }
 
     .btn-light-danger {
-        background-color: #fef2f2;
+        background-color: #fee2e2;
         color: #ef4444;
         border: none;
     }
@@ -284,6 +312,7 @@
     .btn-light-danger:hover {
         background-color: #ef4444;
         color: white;
+        transform: scale(1.05);
     }
 
     .animate-in {

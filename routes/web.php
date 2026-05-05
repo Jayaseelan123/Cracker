@@ -84,6 +84,7 @@ Route::get('/admin/orders', [OrderController::class, 'index'])->middleware('auth
 Route::get('/admin/direct-enquiry', [AdminEnquiryController::class, 'directEnquiry'])->middleware('auth')->name('admin.direct.enquiry');
 Route::post('/admin/direct-enquiry', [AdminEnquiryController::class, 'storeDirect'])->middleware('auth')->name('admin.direct.enquiry.store');
 Route::get('/admin/enquiry-customer', [AdminEnquiryController::class, 'enquiryCustomer'])->middleware('auth')->name('admin.enquiry.customer');
+Route::get('/admin/enquiry-customer/export', [AdminEnquiryController::class, 'exportCustomer'])->middleware('auth')->name('admin.enquiry.customer.export');
 Route::post('/admin/orders/{order}/status', [OrderController::class, 'updateStatus'])->middleware('auth')->name('orders.status');
 // View order details
 Route::get('/admin/orders/view/{id}', [OrderController::class, 'view'])->middleware('auth')->name('admin.orders.view');

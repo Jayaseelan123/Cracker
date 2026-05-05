@@ -15,9 +15,9 @@
                     <button class="btn btn-white shadow-sm border" onclick="window.print()">
                         <i class="fas fa-print me-2 text-primary"></i>Print List
                     </button>
-                    <button class="btn btn-success shadow-sm border-0 px-4">
+                    <a href="{{ route('admin.enquiry.customer.export', request()->query()) }}" class="btn btn-success shadow-sm border-0 px-4">
                         <i class="fas fa-file-excel me-2"></i>Export Excel
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
