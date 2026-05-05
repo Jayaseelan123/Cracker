@@ -997,7 +997,6 @@
                             .then(data => {
                                 updateBadge(data.cart);
                                 refreshDrawer(data.cart);
-                                playCrackerSound();
                             })
                             .finally(() => btn.disabled = false);
                     });
@@ -1022,7 +1021,6 @@
                             .then(data => {
                                 updateBadge(data.cart);
                                 refreshDrawer(data.cart);
-                                playCrackerSound();
                             })
                             .finally(() => btn.disabled = false);
                     });
@@ -1089,7 +1087,6 @@
 
                             // Show success message
                             showToast('Product Quantity added', 'success');
-                            playCrackerSound();
                         })
                         .finally(() => el.disabled = false);
                 }
@@ -1121,7 +1118,6 @@
 
                             // Show success message
                             showToast('Product quantity Reduced!', 'success');
-                            playCrackerSound();
                         })
                         .finally(() => el.disabled = false);
                 }
@@ -1213,7 +1209,6 @@
                             //      badge.innerText = total;
                             //  }
 
-                            playCrackerSound();
                             showToast('Product added to cart', 'success'); // ✅ Toast instead of alert
                         } else {
                             showToast(data.message || 'Error', 'error');
@@ -1241,7 +1236,6 @@
                             if (qtyInput) qtyInput.value = newQty;
                             if (qtyInputM) qtyInputM.value = newQty;
 
-                            playCrackerSound();
                             showToast('Product quantity Reduced!', 'success'); // ✅ Toast
                         } else {
                             showToast("Something went wrong", 'error');
@@ -1291,10 +1285,6 @@
             }, 3000);
         }
 
-        function playCrackerSound() {
-            const audio = new Audio("{{ asset('audio/universfield-epic-cinematic-explosion-454857.mp3') }}");
-            audio.play().catch(e => console.error("Audio play failed:", e));
-        }
 
 
     </script>
@@ -1311,6 +1301,6 @@
     </script>
     @stack('scripts')
 
-</body>
+</body> 
 
 </html>

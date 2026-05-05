@@ -1,27 +1,39 @@
 @extends('layouts.admin')
 
-@section('header', 'Direct Enquiry')
+@section('header', 'New Direct Enquiry')
 
 @section('content')
-<div class="container-fluid">
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h2 class="fw-bold text-dark mb-1">Create Direct Enquiry</h2>
+                    <p class="text-muted mb-0">Generate a new bill for walk-in or manual customers</p>
+                </div>
+                <div class="d-md-flex gap-2 d-none">
+                    <div class="text-end">
+                        <div class="text-muted small">Current Date</div>
+                        <div class="fw-bold text-dark">{{ date('d M, Y') }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <form action="{{ route('admin.direct.enquiry.store') }}" method="POST" id="directOrderForm">
         @csrf
-        <div class="row">
-            <!-- Left Side: Order & Customer Details -->
-            <div class="col-md-4">
-                <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-header bg-white py-3">
-                        <h5 class="mb-0 fw-bold"><i class="fas fa-file-invoice me-2 text-purple"></i> Order Details</h5>
+        <div class="row g-4">
+            <!-- Left Pane: Customer & Billing Config -->
+            <div class="col-xl-4 col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+                    <div class="card-header bg-white py-3 px-4 border-bottom">
+                        <h5 class="mb-0 fw-bold text-primary"><i class="fas fa-user-circle me-2"></i>Customer Info</h5>
                     </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label class="form-label text-muted small uppercase fw-bold">Order Date</label>
-                            <input type="date" name="order_date" class="form-control" value="{{ date('Y-m-d') }}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label text-muted small uppercase fw-bold">Select Customer</label>
-                            <select name="customer_id" id="customerSelect" class="form-select">
+                    <div class="card-body p-4">
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold small text-muted text-uppercase">Select Existing Customer</label>
+                            <select name="customer_id" id="customerSelect" class="form-select form-select-lg border-light-subtle bg-light bg-opacity-50">
                                 <option value="">-- New Customer --</option>
                                 @foreach($customers as $customer)
                                     <option value="{{ $customer->customer_phone }}" 
@@ -31,70 +43,88 @@
                                     </option>
                                 @endforeach
                             </select>
+                            <div class="form-text">Search and select to auto-fill details</div>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label text-muted small uppercase fw-bold">Customer Name</label>
-                            <input type="text" name="customer_name" id="customer_name" class="form-control" placeholder="Enter Name">
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold small text-muted text-uppercase">Customer Name</label>
+                            <input type="text" name="customer_name" id="customer_name" class="form-control form-control-lg border-light-subtle" placeholder="Full Name">
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label text-muted small uppercase fw-bold">Address (*)</label>
-                            <textarea name="address" id="address" class="form-control" rows="3" placeholder="Enter Address" required></textarea>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold small text-muted text-uppercase">Full Address <span class="text-danger">*</span></label>
+                            <textarea name="address" id="address" class="form-control border-light-subtle" rows="3" placeholder="Shipping Address" required></textarea>
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label text-muted small uppercase fw-bold">Staff</label>
-                            <input type="text" class="form-control bg-light" value="{{ auth()->user()->name }}" readonly>
-                            <input type="hidden" name="staff_id" value="{{ auth()->id() }}">
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold small text-muted text-uppercase">Order Date</label>
+                                    <input type="date" name="order_date" class="form-control border-light-subtle" value="{{ date('Y-m-d') }}">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card shadow-sm border-0">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Sub Total:</span>
-                            <span class="fw-bold" id="subTotalDisplay">₹0.00</span>
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden sticky-top" style="top: 2rem; z-index: 10;">
+                    <div class="card-header bg-primary py-3 px-4 text-white">
+                        <h5 class="mb-0 fw-bold"><i class="fas fa-calculator me-2"></i>Bill Summary</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Subtotal:</span>
+                            <span class="fw-bold text-dark" id="subTotalDisplay">₹0.00</span>
                         </div>
+                        
                         <div class="mb-3">
-                            <label class="form-label text-muted small fw-bold">Packing Charges</label>
-                            <input type="number" name="packing_charges" id="packingCharges" class="form-control form-control-sm" value="0">
+                            <label class="form-label fw-semibold small text-muted text-uppercase">Packing Charges (₹)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-light-subtle">₹</span>
+                                <input type="number" name="packing_charges" id="packingCharges" class="form-control border-light-subtle" value="0">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label text-muted small fw-bold">Extra Discount</label>
-                            <input type="number" name="extra_discount" id="extraDiscount" class="form-control form-control-sm" value="0">
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold small text-muted text-uppercase">Additional Discount (₹)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-light-subtle text-danger">-</span>
+                                <input type="number" name="extra_discount" id="extraDiscount" class="form-control border-light-subtle" value="0">
+                            </div>
                         </div>
-                        <hr>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Round OFF:</span>
-                            <span id="roundOffDisplay">₹0.00</span>
+
+                        <div class="p-3 bg-light rounded-3 mb-4">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span class="text-muted">Round Off:</span>
+                                <span id="roundOffDisplay" class="text-dark">₹0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h4 class="mb-0 fw-bold text-dark">Total Amount</h4>
+                                <h4 class="mb-0 fw-bold text-primary" id="overallTotalDisplay">₹0.00</h4>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h4 class="mb-0 fw-bold text-purple">Overall Total:</h4>
-                            <h4 class="mb-0 fw-bold text-purple" id="overallTotalDisplay">₹0.00</h4>
-                        </div>
+
                         <input type="hidden" name="final_amount" id="finalAmountInput">
                         
-                        <button type="submit" class="btn btn-purple w-100 mt-4 py-2 fw-bold shadow-sm">
-                            <i class="fas fa-check-circle me-2"></i> COMPLETE BILL
+                        <button type="submit" class="btn btn-primary btn-lg w-100 py-3 fw-bold rounded-3 shadow-sm hover-up">
+                            <i class="fas fa-check-circle me-2"></i>FINALIZE ENQUIRY
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Side: Product Selection & Items Table -->
-            <div class="col-md-8">
-                <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-header bg-white py-3">
-                        <h5 class="mb-0 fw-bold"><i class="fas fa-search-plus me-2 text-purple"></i> Add Products</h5>
+            <!-- Right Pane: Product Selection & Cart -->
+            <div class="col-xl-8 col-lg-7">
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-header bg-white py-4 px-4 border-bottom">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-cart-plus me-2 text-primary"></i>Add Products to Bill</h5>
                     </div>
-                    <div class="card-body bg-light-subtle">
-                        <div class="row g-2">
+                    <div class="card-body p-4 bg-light bg-opacity-25">
+                        <div class="row g-3">
                             <div class="col-md-5">
-                                <label class="form-label small fw-bold">Select Product</label>
-                                <select id="productSelect" class="form-select">
-                                    <option value="">-- Choose Product --</option>
+                                <label class="form-label fw-bold small text-muted">Select Product</label>
+                                <select id="productSelect" class="form-select form-select-lg border-light-subtle rounded-3">
+                                    <option value="">-- Start typing to search products --</option>
                                     @foreach($products as $product)
                                         <option value="{{ $product->id }}" 
                                                 data-name="{{ $product->name }}"
@@ -105,53 +135,51 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-2">
-                                <label class="form-label small fw-bold">Rate (*)</label>
-                                <input type="number" id="currentRate" class="form-control" placeholder="0.00">
+                            <div class="col-md-2 col-6">
+                                <label class="form-label fw-bold small text-muted">Price (₹)</label>
+                                <input type="number" id="currentRate" class="form-control form-control-lg border-light-subtle" placeholder="0.00">
                             </div>
-                            <div class="col-md-2">
-                                <label class="form-label small fw-bold">Qty (*)</label>
-                                <input type="number" id="currentQty" class="form-control" value="1" min="1">
+                            <div class="col-md-2 col-6">
+                                <label class="form-label fw-bold small text-muted">Quantity</label>
+                                <input type="number" id="currentQty" class="form-control form-control-lg border-light-subtle" value="1" min="1">
                             </div>
-                            <div class="col-md-2">
-                                <label class="form-label small fw-bold">Amount</label>
-                                <input type="text" id="currentAmount" class="form-control bg-light" readonly placeholder="0.00">
+                            <div class="col-md-2 d-none d-md-block">
+                                <label class="form-label fw-bold small text-muted">Item Total</label>
+                                <input type="text" id="currentAmount" class="form-control form-control-lg bg-white border-light-subtle" readonly placeholder="0.00">
                             </div>
                             <div class="col-md-1 d-flex align-items-end">
-                                <button type="button" id="addItemBtn" class="btn btn-purple w-100">
+                                <button type="button" id="addItemBtn" class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm">
                                     <i class="fas fa-plus"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <div class="p-0 table-responsive">
-                        <table class="table table-hover mb-0 align-middle" id="itemsTable">
-                            <thead class="table-light">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="itemsTable">
+                            <thead class="bg-light">
                                 <tr>
-                                    <th class="ps-3">S.No</th>
-                                    <th>Product Name</th>
-                                    <th>Actual Price</th>
-                                    <th>Final Price</th>
-                                    <th>Quantity</th>
-                                    <th>Amount</th>
-                                    <th class="text-end pe-3">Action</th>
+                                    <th class="ps-4 py-3">#</th>
+                                    <th>Product Details</th>
+                                    <th class="text-center">Actual (MRP)</th>
+                                    <th class="text-center">Sale Price</th>
+                                    <th class="text-center">Qty</th>
+                                    <th class="text-center">Total</th>
+                                    <th class="text-end pe-4">Remove</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Items will be added here -->
                                 <tr id="emptyRow">
-                                    <td colspan="7" class="text-center py-5 text-muted small">
-                                        No products added yet. Start by selecting a product above.
+                                    <td colspan="7" class="text-center py-5">
+                                        <div class="text-muted">
+                                            <i class="fas fa-shopping-basket fa-3x mb-3 opacity-25"></i>
+                                            <p class="mb-0">Your item list is currently empty.</p>
+                                            <small>Search and add products from the panel above.</small>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                </div>
-                
-                <div class="d-flex justify-content-end gap-3 align-items-center">
-                    <span class="fs-5 text-muted">Bill Total :</span>
-                    <span class="fs-3 fw-bold text-dark" id="billTotalDisplay">₹0.00</span>
                 </div>
             </div>
         </div>
@@ -159,37 +187,136 @@
 </div>
 
 <template id="itemRowTemplate">
-    <tr>
-        <td class="ps-3 sNo">1</td>
-        <td class="itemName">Product Name</td>
-        <td class="itemActual text-muted">₹0.00</td>
-        <td class="itemRate">₹0.00</td>
-        <td class="itemQty">1</td>
-        <td class="itemTotal fw-bold">₹0.00</td>
-        <td class="text-end pe-3">
-            <button type="button" class="btn btn-sm btn-outline-danger border-0 remove-item">
-                <i class="fas fa-trash"></i>
+    <tr class="item-row animate-in">
+        <td class="ps-4 sNo text-muted">1</td>
+        <td>
+            <div class="fw-bold text-dark itemName">Product Name</div>
+        </td>
+        <td class="text-center text-muted small itemActual">₹0.00</td>
+        <td class="text-center fw-semibold itemRate">₹0.00</td>
+        <td class="text-center">
+            <span class="badge bg-soft-info text-info rounded-pill px-3 py-2 itemQty">1</span>
+        </td>
+        <td class="text-center fw-bold text-dark itemTotal">₹0.00</td>
+        <td class="text-end pe-4">
+            <button type="button" class="btn btn-icon btn-light-danger remove-item">
+                <i class="fas fa-trash-alt"></i>
             </button>
-            <input type="hidden" name="items[INDEX][product_id]" class="in-id">
-            <input type="hidden" name="items[INDEX][qty]" class="in-qty">
-            <input type="hidden" name="items[INDEX][rate]" class="in-rate">
+            <input type="hidden" class="in-id">
+            <input type="hidden" class="in-qty">
+            <input type="hidden" class="in-rate">
         </td>
     </tr>
 </template>
 
 <style>
-    .btn-purple { background-color: #6f42c1; color: white; border: none; }
-    .btn-purple:hover { background-color: #59359a; color: white; }
-    .text-purple { color: #6f42c1; }
-    .bg-light-subtle { background-color: #f8f9fa; }
-    .form-label.uppercase { text-transform: uppercase; letter-spacing: 0.5px; }
-    .card { overflow: hidden; }
+    :root {
+        --primary-color: #6366f1;
+        --secondary-bg: #f8fafc;
+        --border-color: #e2e8f0;
+    }
+
+    body {
+        background-color: #f1f5f9;
+        color: #334155;
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .btn-primary:hover {
+        background-color: #4f46e5;
+        border-color: #4f46e5;
+    }
+
+    .text-primary {
+        color: var(--primary-color) !important;
+    }
+
+    .bg-primary {
+        background-color: var(--primary-color) !important;
+    }
+
+    .card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.1);
+    }
+
+    .table thead th {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 700;
+        color: #64748b;
+        border-top: none;
+    }
+
+    .bg-soft-info {
+        background-color: #e0f2fe;
+    }
+    
+    .text-info {
+        color: #0ea5e9 !important;
+    }
+
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+    }
+
+    .btn-light-danger {
+        background-color: #fef2f2;
+        color: #ef4444;
+        border: none;
+    }
+    
+    .btn-light-danger:hover {
+        background-color: #ef4444;
+        color: white;
+    }
+
+    .animate-in {
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hover-up:hover {
+        transform: translateY(-2px);
+    }
 </style>
 
 @push('scripts')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const productSelect = document.getElementById('productSelect');
+    // Initialize Searchable Dropdowns
+    $('#productSelect').select2({
+        theme: 'bootstrap-5',
+        placeholder: 'Search for a product...'
+    });
+    
+    $('#customerSelect').select2({
+        theme: 'bootstrap-5'
+    });
+
+    const productSelect = $('#productSelect');
+    const customerSelect = $('#customerSelect');
     const currentRate = document.getElementById('currentRate');
     const currentQty = document.getElementById('currentQty');
     const currentAmount = document.getElementById('currentAmount');
@@ -197,20 +324,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const itemsTableBody = document.querySelector('#itemsTable tbody');
     const emptyRow = document.getElementById('emptyRow');
     const subTotalDisplay = document.getElementById('subTotalDisplay');
-    const billTotalDisplay = document.getElementById('billTotalDisplay');
     const packingCharges = document.getElementById('packingCharges');
     const extraDiscount = document.getElementById('extraDiscount');
     const roundOffDisplay = document.getElementById('roundOffDisplay');
     const overallTotalDisplay = document.getElementById('overallTotalDisplay');
     const finalAmountInput = document.getElementById('finalAmountInput');
-    const customerSelect = document.getElementById('customerSelect');
     const itemRowTemplate = document.getElementById('itemRowTemplate');
 
     let items = [];
 
     // Customer Selection Logic
-    customerSelect.addEventListener('change', function() {
-        if(this.value) {
+    customerSelect.on('change', function() {
+        const val = this.value;
+        if(val) {
             const opt = this.options[this.selectedIndex];
             document.getElementById('customer_name').value = opt.dataset.name;
             document.getElementById('address').value = opt.dataset.address;
@@ -221,9 +347,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Product Selection & Pricing
-    productSelect.addEventListener('change', function() {
-        const opt = this.options[this.selectedIndex];
-        if(opt.value) {
+    productSelect.on('change', function() {
+        const val = this.value;
+        if(val) {
+            const opt = this.options[this.selectedIndex];
             currentRate.value = opt.dataset.rate;
             updateCurrentAmount();
         }
@@ -241,18 +368,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add Item to List
     addItemBtn.addEventListener('click', function() {
-        const opt = productSelect.options[productSelect.selectedIndex];
-        if(!opt.value) return alert('Please select a product');
+        const val = productSelect.val();
+        if(!val) return alert('Please select a product first');
         
+        const opt = productSelect[0].options[productSelect[0].selectedIndex];
         const item = {
-            id: opt.value,
+            id: val,
             name: opt.dataset.name,
             actual: parseFloat(opt.dataset.actual),
             rate: parseFloat(currentRate.value),
             qty: parseInt(currentQty.value)
         };
 
-        if(item.qty <= 0) return alert('Quantity must be greater than 0');
+        if(item.qty <= 0) return alert('Quantity must be at least 1');
 
         items.push(item);
         renderTable();
@@ -260,7 +388,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function resetInput() {
-        productSelect.value = '';
+        productSelect.val('').trigger('change');
         currentRate.value = '';
         currentQty.value = 1;
         currentAmount.value = '';
@@ -310,10 +438,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const roundedTotal = Math.round(total);
         const roundOff = roundedTotal - total;
 
-        subTotalDisplay.textContent = '₹' + subtotal.toFixed(2);
-        billTotalDisplay.textContent = '₹' + subtotal.toFixed(2);
-        roundOffDisplay.textContent = '₹' + roundOff.toFixed(2);
-        overallTotalDisplay.textContent = '₹' + roundedTotal.toFixed(2);
+        subTotalDisplay.textContent = '₹' + subtotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        roundOffDisplay.textContent = '₹' + roundOff.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        overallTotalDisplay.textContent = '₹' + roundedTotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
         finalAmountInput.value = roundedTotal;
     }
 
@@ -324,3 +451,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endpush
 @endsection
+
