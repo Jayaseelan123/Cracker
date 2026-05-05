@@ -21,52 +21,85 @@
 
         /* ---------------- HEADER ---------------- */
         .top-header {
-            background-color: #0d6b8a;
-            /* Teal as in footer */
+            background: rgba(13, 107, 138, 0.95); /* Deep teal glass */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             color: #ffffff;
             padding: 0;
             position: fixed;
             width: 100%;
             z-index: 1000;
             top: 0;
-            height: 60px;
-            /* Standardize height */
+            height: 70px;
             display: flex;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
         }
 
         .top-header a:not(.cart-btn) {
-            color: #ffffff;
+            color: #f8f9fa;
             text-decoration: none;
-            margin-left: 20px;
-            font-size: 16px;
+            margin-left: 25px;
+            font-size: 15px;
             font-weight: 600;
-            display: inline-block;
-            transition: opacity 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            padding-bottom: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .top-header a:not(.cart-btn)::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(90deg, #ff9900, #ff3b3b);
+            transition: width 0.3s ease;
+            border-radius: 2px;
         }
 
         .top-header a:not(.cart-btn):hover {
-            opacity: 0.8;
-            color: #ffffff;
+            color: #ff9900;
+        }
+
+        .top-header a:not(.cart-btn):hover::after {
+            width: 100%;
         }
 
         .logo-text {
-            color: #ffffff !important;
-            font-size: 24px;
-            letter-spacing: 1px;
+            color: #fff !important;
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            background: linear-gradient(135deg, #ff9900, #ff3b3b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(255, 153, 0, 0.3);
         }
 
         .cart-btn {
-            background-color: #ff9800;
+            background: linear-gradient(135deg, #ff9900, #ff3b3b);
             color: white;
-            padding: 8px 14px;
+            padding: 8px 18px;
             border-radius: 30px;
-            font-weight: bold;
+            font-weight: 700;
             display: inline-flex;
             align-items: center;
             gap: 8px;
             text-decoration: none;
+            box-shadow: 0 4px 15px rgba(255, 59, 59, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .cart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 59, 59, 0.4);
+            color: white;
         }
 
         /* ---------------- MOBILE MENU ---------------- */
@@ -175,11 +208,23 @@
 
         /* ================= FOOTER MAIN ================= */
         .site-footer {
-            background: #0d6b8a;
-            color: #fff;
-            padding: 50px 0 20px;
-            font-family: Arial, sans-serif;
-            margin-top: 50px;
+            background: linear-gradient(135deg, #0a4f68 0%, #063647 100%);
+            color: #e0e0e0;
+            padding: 70px 0 30px;
+            font-family: 'Inter', Arial, sans-serif;
+            margin-top: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .site-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #ff9900, #ff3b3b);
         }
 
         /* Layout */
@@ -190,35 +235,53 @@
             display: grid;
             grid-template-columns: 2fr 1fr 2fr;
             gap: 50px;
+            position: relative;
+            z-index: 2;
         }
 
         /* ================= LOGO ================= */
         .footer-logo {
-            background: #ffffff;
-            color: #ff8c00;
-            font-size: 26px;
-            font-weight: bold;
-            padding: 20px 50px;
+            color: #fff;
+            font-size: 32px;
+            font-weight: 900;
             display: inline-block;
-            border-radius: 4px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ff9900, #ff3b3b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         /* Tagline */
         .footer-tagline {
-            line-height: 1.6;
+            line-height: 1.8;
             max-width: 420px;
-            opacity: .9;
-            color: #fff;
+            opacity: 0.85;
+            color: #b0b0c0;
             margin-bottom: 0;
+            font-size: 15px;
         }
 
         /* ================= HEADINGS ================= */
         .site-footer h4 {
-            margin-bottom: 15px;
-            font-size: 20px;
+            margin-bottom: 25px;
+            font-size: 18px;
             color: #fff;
-            font-weight: bold;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .site-footer h4::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 40px;
+            height: 2px;
+            background: #ff9900;
+            border-radius: 2px;
         }
 
         /* ================= LINKS ================= */
@@ -228,43 +291,69 @@
         }
 
         .footer-links li {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .footer-links a {
-            color: white;
+            color: #b0b0c0;
             text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
         }
 
         .footer-links a:hover {
-            text-decoration: underline;
+            color: #ff9900;
+            transform: translateX(5px);
         }
 
         /* ================= CONTACT ================= */
         .footer-contact p {
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             line-height: 1.6;
-            color: #fff;
+            color: #b0b0c0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 15px;
+        }
+
+        .footer-contact i {
+            color: #ff9900;
+            font-size: 18px;
+            margin-top: 3px;
         }
 
         /* ================= LATEST POSTS ================= */
         .latest-posts p {
-            margin-bottom: 6px;
+            margin-bottom: 12px;
             line-height: 1.6;
+        }
+
+        .latest-posts a {
+            color: #b0b0c0 !important;
+            text-decoration: none !important;
+            transition: all 0.3s ease;
+        }
+
+        .latest-posts a:hover {
+            color: #ff9900 !important;
         }
 
         /* ================= DIVIDER ================= */
         .footer-line {
-            border-top: 1px solid rgba(255, 255, 255, .3);
-            margin: 35px 0 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 50px 0 25px;
+            position: relative;
+            z-index: 2;
         }
 
         /* ================= COPYRIGHT ================= */
         .footer-copy {
             text-align: center;
-            font-size: 15px;
-            opacity: .9;
-            color: #fff;
+            font-size: 14px;
+            color: #8888a0;
+            position: relative;
+            z-index: 2;
         }
 
         /* ================= MOBILE ================= */
@@ -275,7 +364,7 @@
             }
 
             .footer-logo {
-                margin: auto auto 15px;
+                margin: auto auto 20px;
                 display: table;
             }
         }
