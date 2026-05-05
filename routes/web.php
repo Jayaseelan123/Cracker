@@ -79,6 +79,9 @@ Route::resource('category', CategoryController::class)->middleware('auth');
 // Admin products resource
 Route::resource('products', ProductController::class)->middleware('auth');
 
+// Admin banners resource
+Route::resource('banners', \App\Http\Controllers\BannerController::class)->middleware('auth');
+
 // Admin orders
 Route::get('/admin/orders', [OrderController::class, 'index'])->middleware('auth')->name('orders.index');
 Route::get('/admin/direct-enquiry', [AdminEnquiryController::class, 'directEnquiry'])->middleware('auth')->name('admin.direct.enquiry');

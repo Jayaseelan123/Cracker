@@ -29,7 +29,16 @@
             Dashboard
         </a>
     </li>
-    <a href="{{ Route::has('category.index') ? route('category.index') : '#' }}" class="{{ request()->routeIs('category.*') ? 'active' : '' }}"><i class="fas fa-list me-2"></i> Categories</a>
+    <li class="nav-item">
+        <a href="{{ Route::has('category.index') ? route('category.index') : '#' }}" class="nav-link {{ request()->routeIs('category.*') ? 'active' : '' }}">
+            <i class="fas fa-list me-2"></i> Categories
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ route('banners.index') }}" class="nav-link {{ request()->routeIs('banners.*') ? 'active' : '' }}">
+            <i class="fas fa-images me-2"></i> Banners
+        </a>
+    </li>
     <li class="nav-item">
         <a href="{{ route('products.index') }}" class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}">
             <img src="{{ asset('images/icons/product.png') }}" alt="Products" width="22" height="22" class="me-2 align-middle" onerror="this.style.display='none'">
