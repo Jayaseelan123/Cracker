@@ -32,8 +32,8 @@
                                     <div class="text-muted small">{{ $product->name_ta }}</div>
                                 @endif
                             </td>
-                            <td class="old-price" style="text-align:center;">{{ number_format($product->mrp, 2) }}</td>
-                            <td class="new-price" style="text-align:center;">{{ number_format($product->price, 2) }}</td>
+                            <td style="text-align:center; font-weight: bold; font-size: 1.1em; color: #333;">{{ number_format($product->mrp, 2) }}</td>
+                            <td style="text-align:center; font-weight: bold; font-size: 1.1em; color: #333;">{{ number_format($product->price, 2) }}</td>
                             @php $cartItems = session('cart', []);
                             $cartQty = $cartItems[$product->id] ?? 0; @endphp
                             <td style="text-align:center;">

@@ -83,10 +83,142 @@
             text-shadow: 0 2px 10px rgba(255, 153, 0, 0.3);
         }
 
-        /* ---------------- HERO ---------------- */
+        /* ---------------- HERO BANNER SLIDER ---------------- */
+        .hero-slider {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            overflow: hidden;
+            margin-top: 70px;
+        }
+
+        .hero-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+            z-index: 2;
+        }
+
+        .hero-slide img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-slide-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.2) 100%);
+            z-index: 1;
+        }
+
+        .hero-slide-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero-slide-content h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 15px rgba(0,0,0,0.5);
+            animation: slideUp 0.8s ease forwards;
+        }
+
+        .hero-slide-content p {
+            font-size: 1.5rem;
+            opacity: 0.95;
+            text-shadow: 1px 1px 8px rgba(0,0,0,0.4);
+            animation: slideUp 0.8s 0.2s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Slider Navigation Dots */
+        .hero-slider-dots {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+
+        .hero-slider-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            border: 2px solid rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .hero-slider-dot.active {
+            background: #ff9900;
+            border-color: #ff9900;
+            transform: scale(1.2);
+        }
+
+        /* Slider Arrow Buttons */
+        .hero-slider-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-slider-arrow:hover {
+            background: rgba(255,153,0,0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .hero-slider-arrow.prev { left: 20px; }
+        .hero-slider-arrow.next { right: 20px; }
+
+        /* Fallback static hero when no banners */
         .hero-banner {
-            background: url("{{ asset('images/hero.jpg') }}");
+            background: linear-gradient(135deg, rgba(13,107,138,0.9), rgba(6,54,71,0.9)), url("{{ asset('images/hero.jpg') }}");
             background-size: cover;
+            background-position: center;
             height: 600px;
             display: flex;
             align-items: center;
@@ -94,6 +226,18 @@
             color: #fff;
             font-weight: 900;
             text-align: center;
+            margin-top: 70px;
+        }
+
+        .hero-banner h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .hero-banner p {
+            font-size: 1.5rem;
+            opacity: 0.9;
         }
 
         .category-header {
@@ -326,6 +470,25 @@
 
         /* MOBILE HERO */
         @media (max-width: 575px) {
+            .hero-slider {
+                height: 300px;
+                margin-top: 60px;
+            }
+
+            .hero-slide-content h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero-slide-content p {
+                font-size: 1rem;
+            }
+
+            .hero-slider-arrow {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+
             .hero-banner {
                 height: 280px;
                 background-attachment: scroll;
@@ -728,24 +891,28 @@
                 display: none;
             }
 
-            /* HERO Mobile Fix - Large Hero */
-            .hero-banner {
-                height: 480px !important;
-                background-position: center center;
-                padding: 0 20px;
+            /* HERO Mobile Fix */
+            .hero-slider {
+                height: 350px !important;
+                margin-top: 60px !important;
             }
 
-            .hero-banner h1 {
-                font-size: 2.8rem !important;
+            .hero-slide-content h1 {
+                font-size: 2rem !important;
                 line-height: 1.1;
                 text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
                 margin-bottom: 15px;
             }
 
-            .hero-banner p {
-                font-size: 1.3rem !important;
+            .hero-slide-content p {
+                font-size: 1.1rem !important;
                 text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
                 opacity: 0.95;
+            }
+
+            .hero-banner {
+                height: 350px !important;
+                margin-top: 60px !important;
             }
         }
 
@@ -914,13 +1081,42 @@
         </div>
     </div>
 
-    <!-- HERO -->
+    <!-- HERO BANNER SLIDER -->
+    @if(isset($banners) && $banners->count() > 0)
+    <div class="hero-slider" id="heroSlider">
+        @foreach($banners as $index => $banner)
+        <div class="hero-slide {{ $index === 0 ? 'active' : '' }}" data-slide="{{ $index }}">
+            <img src="{{ asset($banner->image) }}" alt="{{ $banner->title ?? 'Banner' }}">
+            <div class="hero-slide-overlay"></div>
+            <div class="hero-slide-content">
+                @if($banner->title)
+                    <h1>{{ $banner->title }}</h1>
+                @endif
+                @if($banner->subtitle)
+                    <p>{{ $banner->subtitle }}</p>
+                @endif
+            </div>
+        </div>
+        @endforeach
+
+        @if($banners->count() > 1)
+        <button class="hero-slider-arrow prev" id="sliderPrev"><i class="fas fa-chevron-left"></i></button>
+        <button class="hero-slider-arrow next" id="sliderNext"><i class="fas fa-chevron-right"></i></button>
+        <div class="hero-slider-dots" id="sliderDots">
+            @foreach($banners as $index => $banner)
+            <div class="hero-slider-dot {{ $index === 0 ? 'active' : '' }}" data-slide="{{ $index }}"></div>
+            @endforeach
+        </div>
+        @endif
+    </div>
+    @else
     <div class="hero-banner">
         <div>
             <h1>@yield('hero_title', 'Happy Diwali')</h1>
             <p>@yield('hero_subtitle', 'Festival of Lights')</p>
         </div>
     </div>
+    @endif
 
     <div class="container my-4">
         <div class="mt-2'">
@@ -976,7 +1172,11 @@
         </div>
 
         <div class="footer-line"></div>
-        <div class="footer-copy">© 2025 Crackers Time. All rights reserved. | Delivery Available</div>
+        <div class="footer-copy">
+            © 2025 Crackers Time. All rights reserved. | Delivery Available
+            <br>
+            Powered by Aspirentech Solution
+        </div>
     </footer>
 
 
@@ -1343,6 +1543,70 @@
                 mobileMenuContainer.classList.toggle('open');
             });
         }
+    </script>
+
+    <!-- Banner Slider Script -->
+    <script>
+    (function() {
+        const slider = document.getElementById('heroSlider');
+        if (!slider) return;
+
+        const slides = slider.querySelectorAll('.hero-slide');
+        const dots = slider.querySelectorAll('.hero-slider-dot');
+        const prevBtn = document.getElementById('sliderPrev');
+        const nextBtn = document.getElementById('sliderNext');
+
+        if (slides.length <= 1) return;
+
+        let currentSlide = 0;
+        let autoPlayInterval;
+
+        function goToSlide(index) {
+            slides[currentSlide].classList.remove('active');
+            if (dots[currentSlide]) dots[currentSlide].classList.remove('active');
+
+            currentSlide = (index + slides.length) % slides.length;
+
+            slides[currentSlide].classList.add('active');
+            if (dots[currentSlide]) dots[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            goToSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            goToSlide(currentSlide - 1);
+        }
+
+        function startAutoPlay() {
+            autoPlayInterval = setInterval(nextSlide, 5000);
+        }
+
+        function stopAutoPlay() {
+            clearInterval(autoPlayInterval);
+        }
+
+        // Arrow buttons
+        if (nextBtn) nextBtn.addEventListener('click', function() { stopAutoPlay(); nextSlide(); startAutoPlay(); });
+        if (prevBtn) prevBtn.addEventListener('click', function() { stopAutoPlay(); prevSlide(); startAutoPlay(); });
+
+        // Dot navigation
+        dots.forEach(function(dot) {
+            dot.addEventListener('click', function() {
+                stopAutoPlay();
+                goToSlide(parseInt(this.dataset.slide));
+                startAutoPlay();
+            });
+        });
+
+        // Pause on hover
+        slider.addEventListener('mouseenter', stopAutoPlay);
+        slider.addEventListener('mouseleave', startAutoPlay);
+
+        // Start auto-play
+        startAutoPlay();
+    })();
     </script>
     @stack('scripts')
 

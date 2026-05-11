@@ -464,7 +464,11 @@
         </div>
 
         <div class="footer-line"></div>
-        <div class="footer-copy">© 2025 Crackers Time. All rights reserved. | Delivery Available</div>
+        <div class="footer-copy">
+            © 2025 Crackers Time. All rights reserved. | Delivery Available
+            <br>
+            Powered by Aspirentech Solution
+        </div>
     </footer>
 
 

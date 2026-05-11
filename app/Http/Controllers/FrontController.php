@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Banner;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -15,7 +16,9 @@ class FrontController extends Controller
     {
         // Get all categories with their products
         $categories = Category::with('products')->get();
-        return view('front.index', compact('categories'));
+        // Get active banners for the homepage hero slider
+        $banners = Banner::where('is_active', true)->latest()->get();
+        return view('front.index', compact('categories', 'banners'));
     }
 
     public function about()
