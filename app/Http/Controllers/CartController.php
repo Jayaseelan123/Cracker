@@ -35,21 +35,43 @@ class CartController extends Controller
 
     public function add(Request $request, $id)
     {
+        $product = \App\Models\Product::find($id);
+        if (!$product) {
+            return redirect()->back()->with('error', 'Product not found.');
+        }
+
         $quantity = max(1, (int) $request->input('quantity', 1));
         $cart = session('cart', []);
-        if (isset($cart[$id])) {
-            $cart[$id] += $quantity;
-        } else {
-            $cart[$id] = $quantity;
+        $currentQty = $cart[$id] ?? 0;
+        $newTotalQty = $currentQty + $quantity;
+
+        if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'stock')) {
+            if ($product->stock < $newTotalQty) {
+                return redirect()->back()->with('error', 'Only ' . $product->stock . ' items available in stock.');
+            }
         }
+
+        $cart[$id] = $newTotalQty;
         session(['cart' => $cart]);
         return redirect()->back()->with('success', 'Product added to cart.');
     }
 
     public function update(Request $request, $id)
     {
+        $product = \App\Models\Product::find($id);
+        if (!$product) {
+            return redirect()->back()->with('error', 'Product not found.');
+        }
+
         $quantity = max(0, (int) $request->input('quantity', 0));
         $cart = session('cart', []);
+        
+        if ($quantity > 0 && \Illuminate\Support\Facades\Schema::hasColumn('products', 'stock')) {
+            if ($product->stock < $quantity) {
+                return redirect()->back()->with('error', 'Only ' . $product->stock . ' items available in stock.');
+            }
+        }
+
         if ($quantity <= 0) {
             // remove item when quantity is zero or less
             if (isset($cart[$id])) {
@@ -77,8 +99,24 @@ class CartController extends Controller
      */
     public function ajaxAdd(Request $request, $id)
     {
+        $product = \App\Models\Product::find($id);
+        if (!$product) {
+            return response()->json(['success' => false, 'message' => 'Product not found']);
+        }
+
         $cart = session()->get('cart', []);
-        $cart[$id] = ($cart[$id] ?? 0) + 1;
+        $currentQty = $cart[$id] ?? 0;
+
+        if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'stock')) {
+            if ($product->stock <= $currentQty) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Only ' . $product->stock . ' items available in stock'
+                ]);
+            }
+        }
+
+        $cart[$id] = $currentQty + 1;
         session()->put('cart', $cart);
 
         // return minimal info; front-end will refresh drawer html
@@ -107,7 +145,22 @@ class CartController extends Controller
      */
     public function ajaxUpdate(Request $request, $id)
     {
+        $product = \App\Models\Product::find($id);
+        if (!$product) {
+            return response()->json(['success' => false, 'message' => 'Product not found']);
+        }
+
         $qty = max(0, intval($request->input('quantity', 0)));
+        
+        if ($qty > 0 && \Illuminate\Support\Facades\Schema::hasColumn('products', 'stock')) {
+            if ($product->stock < $qty) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Only ' . $product->stock . ' items available in stock'
+                ]);
+            }
+        }
+
         $cart = session()->get('cart', []);
 
         if ($qty <= 0) {

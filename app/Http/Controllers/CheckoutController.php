@@ -88,6 +88,15 @@ class CheckoutController extends Controller
                 foreach ($cart as $productId => $qty) {
                     $product = \App\Models\Product::find($productId);
                     if (! $product) continue;
+
+                    // Final stock check
+                    if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'stock')) {
+                        if ($product->stock < $qty) {
+                            throw new \Exception("Product '" . ($product->name_en ?? $product->name) . "' is out of stock (Available: " . $product->stock . ")");
+                        }
+                        $product->decrement('stock', $qty);
+                    }
+
                     $price = $product->price ?? $product->rate ?? $product->mrp ?? 0;
                     $itemTotal = $price * $qty;
 
@@ -98,10 +107,6 @@ class CheckoutController extends Controller
                         'price' => $price,
                         'total' => $itemTotal,
                     ]);
-
-                    if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'stock')) {
-                        try { $product->decrement('stock', $qty); } catch (\Throwable $e) { }
-                    }
                 }
 
                 return $order;

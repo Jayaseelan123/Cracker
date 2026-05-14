@@ -46,7 +46,15 @@
             <td>₹{{ $displayFinal ? number_format($displayFinal, 2) : '—' }}</td>
             <td>{{ $product->min_order_value ?? '—' }}</td>
             <td>{{ $product->max_order_value ?? '—' }}</td>
-            <td>{{ $product->stock ?? '—' }}</td>
+            <td>
+                @if($product->stock <= 0)
+                    <span class="badge bg-danger">0 (Out of Stock)</span>
+                @elseif($product->stock < 10)
+                    <span class="badge bg-warning text-dark">{{ $product->stock }} (Low Stock)</span>
+                @else
+                    <span class="badge bg-info text-dark">{{ $product->stock }}</span>
+                @endif
+            </td>
             <td>{{ optional($product->category)->name ?? '—' }}</td>
             <td><span class="badge bg-{{ ($product->status ?? 'Active') === 'Active' ? 'success' : 'secondary' }}">{{ $product->status ?? 'Active' }}</span></td>
             <td>

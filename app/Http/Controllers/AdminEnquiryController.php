@@ -65,6 +65,11 @@ class AdminEnquiryController extends Controller
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
+
+                    // Decrement stock if column exists
+                    if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'stock')) {
+                        DB::table('products')->where('id', $item['product_id'])->decrement('stock', $item['quantity']);
+                    }
                 }
             });
 

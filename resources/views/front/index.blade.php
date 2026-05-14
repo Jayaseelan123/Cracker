@@ -37,13 +37,23 @@
                             @php $cartItems = session('cart', []);
                             $cartQty = $cartItems[$product->id] ?? 0; @endphp
                             <td style="text-align:center;">
-                                <div class="qty-controls" style="justify-content:center;">
-                                    <button type="button" data-id="{{ $product->id }}"
-                                        class="qty-btn minus qty-minus-btn">-</button>
-                                    <input type="text" readonly class="qty-input qty-display-{{ $product->id }}"
-                                        value="{{ $cartQty }}">
-                                    <button type="button" data-id="{{ $product->id }}" class="qty-btn plus qty-plus-btn">+</button>
-                                </div>
+                                @if($product->stock > 0)
+                                    <div class="qty-controls" style="justify-content:center;">
+                                        <button type="button" data-id="{{ $product->id }}"
+                                            class="qty-btn minus qty-minus-btn">-</button>
+                                        <input type="text" readonly class="qty-input qty-display-{{ $product->id }}"
+                                            value="{{ $cartQty }}">
+                                        <button type="button" data-id="{{ $product->id }}" class="qty-btn plus qty-plus-btn">+</button>
+                                    </div>
+                                    <div class="text-success small mt-1">In Stock: {{ $product->stock }}</div>
+                                @else
+                                    <div class="text-danger fw-bold">Out of Stock</div>
+                                    <div class="qty-controls" style="justify-content:center; opacity: 0.5; pointer-events: none;">
+                                        <button type="button" class="qty-btn minus" disabled>-</button>
+                                        <input type="text" readonly class="qty-input" value="0">
+                                        <button type="button" class="qty-btn plus" disabled>+</button>
+                                    </div>
+                                @endif
                             </td>
                         </tr>
                     @empty
