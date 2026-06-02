@@ -32,9 +32,6 @@ class ProductController extends Controller
     {
         // Build validation rules only for columns that exist in the DB
         $rules = [];
-        if (Schema::hasColumn('products', 'sku')) {
-            $rules['sku'] = 'required|string|max:255|unique:products,sku';
-        }
         if (Schema::hasColumn('products', 'name_en')) {
             $rules['name_en'] = 'required|string|max:255';
         }
@@ -58,16 +55,30 @@ class ProductController extends Controller
             $rules['discount_rate'] = 'nullable|numeric';
         }
         if (Schema::hasColumn('products', 'final_price')) {
-            $rules['final_price'] = 'nullable|numeric';
+            $rules['final_price'] = 'required|numeric';
         }
         if (Schema::hasColumn('products', 'stock')) {
-            $rules['stock'] = 'nullable|integer';
+            $rules['stock'] = 'required|integer|min:1';
         }
         if (Schema::hasColumn('products', 'image')) {
             $rules['image'] = 'nullable|image|max:5120';
         }
+        if (Schema::hasColumn('products', 'video')) {
+            $rules['video'] = 'nullable|mimetypes:video/mp4,video/webm,video/ogg,video/avi,video/quicktime|max:51200';
+        }
+        if (Schema::hasColumn('products', 'video_url')) {
+            $rules['video_url'] = 'nullable|url|max:255';
+        }
+        if (Schema::hasColumn('products', 'video_status')) {
+            $rules['video_status'] = 'nullable|in:Active,Inactive';
+        }
 
         $validated = $request->validate($rules);
+
+        // Prevent negative final price
+        if ($request->filled('discount_rate') && $request->filled('rate') && $request->discount_rate > $request->rate) {
+            return back()->withInput()->withErrors(['discount_rate' => 'Discount cannot be greater than the Rate (MRP).']);
+        }
 
         $data = $request->except('image');
         // Remove any request keys that are not actual product table columns
@@ -137,6 +148,16 @@ class ProductController extends Controller
             }
         }
 
+        if ($request->hasFile('video') && in_array('video', $columns)) {
+            if (!file_exists(public_path('product_videos'))) {
+                mkdir(public_path('product_videos'), 0755, true);
+            }
+            $vfile = $request->file('video');
+            $vfilename = time() . '_' . $vfile->getClientOriginalName();
+            $vfile->move(public_path('product_videos'), $vfilename);
+            $data['video'] = $vfilename;
+        }
+
         Product::create($data);
 
         return redirect()->route('products.index')->with('success', 'Product Added Successfully!');
@@ -152,9 +173,6 @@ class ProductController extends Controller
     {
         // Build update validation rules based on existing DB columns
         $rules = [];
-        if (Schema::hasColumn('products', 'sku')) {
-            $rules['sku'] = 'required|string|max:255|unique:products,sku,' . $product->id;
-        }
         if (Schema::hasColumn('products', 'name_en')) {
             $rules['name_en'] = 'required|string|max:255';
         }
@@ -171,16 +189,30 @@ class ProductController extends Controller
             $rules['discount_rate'] = 'nullable|numeric';
         }
         if (Schema::hasColumn('products', 'final_price')) {
-            $rules['final_price'] = 'nullable|numeric';
+            $rules['final_price'] = 'required|numeric';
         }
         if (Schema::hasColumn('products', 'stock')) {
-            $rules['stock'] = 'nullable|integer';
+            $rules['stock'] = 'required|integer|min:1';
         }
         if (Schema::hasColumn('products', 'image')) {
             $rules['image'] = 'nullable|image|max:5120';
         }
+        if (Schema::hasColumn('products', 'video')) {
+            $rules['video'] = 'nullable|mimetypes:video/mp4,video/webm,video/ogg,video/avi,video/quicktime|max:51200';
+        }
+        if (Schema::hasColumn('products', 'video_url')) {
+            $rules['video_url'] = 'nullable|url|max:255';
+        }
+        if (Schema::hasColumn('products', 'video_status')) {
+            $rules['video_status'] = 'nullable|in:Active,Inactive';
+        }
 
         $validated = $request->validate($rules);
+
+        // Prevent negative final price
+        if ($request->filled('discount_rate') && $request->filled('rate') && $request->discount_rate > $request->rate) {
+            return back()->withInput()->withErrors(['discount_rate' => 'Discount cannot be greater than the Rate (MRP).']);
+        }
 
         $data = $request->except('image');
         // Remove any request keys that are not actual product table columns
@@ -221,6 +253,20 @@ class ProductController extends Controller
             }
         }
 
+        if ($request->hasFile('video') && in_array('video', $columns)) {
+            // delete old video
+            if (!empty($product->video) && file_exists(public_path('product_videos/' . $product->video))) {
+                @unlink(public_path('product_videos/' . $product->video));
+            }
+            if (!file_exists(public_path('product_videos'))) {
+                mkdir(public_path('product_videos'), 0755, true);
+            }
+            $vfile = $request->file('video');
+            $vfilename = time() . '_' . $vfile->getClientOriginalName();
+            $vfile->move(public_path('product_videos'), $vfilename);
+            $data['video'] = $vfilename;
+        }
+
         $product->update($data);
 
         return redirect()->route('products.index')->with('success', 'Product Updated Successfully!');
@@ -237,6 +283,22 @@ class ProductController extends Controller
     }
 
     /**
+     * Update the product status via dropdown (Active / Inactive).
+     */
+    public function toggleStatus(Request $request, Product $product)
+    {
+        $status = $request->input('status', 'Active');
+        $product->status = in_array($status, ['Active', 'Inactive']) ? $status : 'Active';
+        $product->save();
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Status updated to ' . $product->status]);
+        }
+
+        return redirect()->route('products.index')->with('success', 'Product status updated to ' . $product->status . '.');
+    }
+
+    /**
      * Remove the specified product from storage.
      */
     public function destroy(Product $product)
@@ -244,6 +306,10 @@ class ProductController extends Controller
         // delete image file if exists
         if (!empty($product->image) && file_exists(public_path('product_images/' . $product->image))) {
             @unlink(public_path('product_images/' . $product->image));
+        }
+        // delete video file if exists
+        if (!empty($product->video) && file_exists(public_path('product_videos/' . $product->video))) {
+            @unlink(public_path('product_videos/' . $product->video));
         }
 
         $product->delete();

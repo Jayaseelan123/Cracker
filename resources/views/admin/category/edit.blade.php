@@ -20,8 +20,9 @@
     <form action="{{ route('category.update', $category->id) }}" method="POST">
       @csrf
       @method('PUT')
+      <p class="text-muted small mb-3">Note: <span class="text-danger fw-bold">*</span> Required fields</p>
       <div class="mb-3">
-        <label class="form-label">Name</label>
+        <label class="form-label">Name <span class="text-danger">*</span></label>
         <input type="text" name="name" class="form-control" value="{{ old('name', $category->name) }}" required>
       </div>
       <div class="mb-3">
@@ -29,7 +30,7 @@
         <input type="text" name="tamil_name" class="form-control" value="{{ old('tamil_name', $category->tamil_name) }}">
       </div>
       <div class="mb-3">
-        <label class="form-label">Slug</label>
+        <label class="form-label">Slug <span class="text-danger">*</span></label>
         <input type="text" name="slug" class="form-control" value="{{ old('slug', $category->slug) }}" required>
       </div>
       <button class="btn btn-primary" type="submit">Update</button>

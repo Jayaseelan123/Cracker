@@ -11,7 +11,11 @@ class OrderController extends Controller
     // ... existing code ...
     public function index(Request $request)
     {
-        $orders = Order::when($request->status && $request->status != "All", function($query) use ($request){
+        $orders = Order::where(function($q) {
+                        $q->where('order_number', 'NOT LIKE', 'DIR-%')
+                          ->orWhereNull('order_number');
+                    })
+                    ->when($request->status && $request->status != "All", function($query) use ($request){
                         $query->where('status', $request->status);
                     })
                     ->orderBy('id','DESC')
@@ -45,5 +49,20 @@ class OrderController extends Controller
             ->setOption('margin-bottom', 0);
         
         return $pdf->download('Order_' . $order->order_number . '.pdf');
+    }
+
+    // Method to delete an order/enquiry
+    public function destroy($id)
+    {
+        $order = Order::findOrFail($id);
+        
+        // Delete related items first to avoid constraint issues if cascading is not set
+        if($order->items) {
+            $order->items()->delete();
+        }
+        
+        $order->delete();
+        
+        return redirect()->back()->with('success', 'Enquiry deleted successfully.');
     }
 }

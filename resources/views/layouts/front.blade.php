@@ -51,7 +51,7 @@
             transition: color 0.3s ease;
         }
 
-        .top-header a:not(.cart-btn)::after {
+        .top-header a:not(.cart-btn):not(.btn)::after {
             content: '';
             position: absolute;
             width: 0;
@@ -63,11 +63,11 @@
             border-radius: 2px;
         }
 
-        .top-header a:not(.cart-btn):hover {
+        .top-header a:not(.cart-btn):not(.btn):hover {
             color: #ff9900;
         }
 
-        .top-header a:not(.cart-btn):hover::after {
+        .top-header a:not(.cart-btn):not(.btn):hover::after {
             width: 100%;
         }
 
@@ -80,6 +80,14 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 2px 10px rgba(255, 153, 0, 0.3);
+        }
+
+        /* Header logo image (when company logo is uploaded) */
+        .header-logo-img {
+            max-height: 48px;
+            max-width: 160px;
+            object-fit: contain;
+            display: block;
         }
 
         .cart-btn {
@@ -192,181 +200,11 @@
             text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
         }
 
-        @media screen and (max-width: 768px) {
-            .hero-banner {
-                height: 350px;
-            }
-
-            .hero-banner h1 {
-                font-size: 2.2rem;
-            }
-
-            .hero-banner p {
-                font-size: 1.1rem;
-            }
-        }
-
-        /* ================= FOOTER MAIN ================= */
-        .site-footer {
-            background: linear-gradient(135deg, #0a4f68 0%, #063647 100%);
-            color: #e0e0e0;
-            padding: 70px 0 30px;
-            font-family: 'Inter', Arial, sans-serif;
-            margin-top: 60px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .site-footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #ff9900, #ff3b3b);
-        }
-
-        /* Layout */
-        .footer-container {
-            max-width: 1200px;
-            margin: auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: 2fr 1fr 2fr;
-            gap: 50px;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* ================= LOGO ================= */
-        .footer-logo {
-            color: #fff;
-            font-size: 32px;
-            font-weight: 900;
-            display: inline-block;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #ff9900, #ff3b3b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Tagline */
-        .footer-tagline {
-            line-height: 1.8;
-            max-width: 420px;
-            opacity: 0.85;
-            color: #b0b0c0;
-            margin-bottom: 0;
-            font-size: 15px;
-        }
-
-        /* ================= HEADINGS ================= */
-        .site-footer h4 {
-            margin-bottom: 25px;
-            font-size: 18px;
-            color: #fff;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            display: inline-block;
-        }
-
-        .site-footer h4::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: -8px;
-            width: 40px;
-            height: 2px;
-            background: #ff9900;
-            border-radius: 2px;
-        }
-
-        /* ================= LINKS ================= */
-        .footer-links ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-
-        .footer-links a {
-            color: #b0b0c0;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            display: inline-block;
-        }
-
-        .footer-links a:hover {
-            color: #ff9900;
-            transform: translateX(5px);
-        }
-
-        /* ================= CONTACT ================= */
-        .footer-contact p {
-            margin-bottom: 15px;
-            line-height: 1.6;
-            color: #b0b0c0;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            font-size: 15px;
-        }
-
-        .footer-contact i {
-            color: #ff9900;
-            font-size: 18px;
-            margin-top: 3px;
-        }
-
-        /* ================= LATEST POSTS ================= */
-        .latest-posts p {
-            margin-bottom: 12px;
-            line-height: 1.6;
-        }
-
-        .latest-posts a {
-            color: #b0b0c0 !important;
-            text-decoration: none !important;
-            transition: all 0.3s ease;
-        }
-
-        .latest-posts a:hover {
-            color: #ff9900 !important;
-        }
-
-        /* ================= DIVIDER ================= */
-        .footer-line {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin: 50px 0 25px;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* ================= COPYRIGHT ================= */
-        .footer-copy {
-            text-align: center;
-            font-size: 14px;
-            color: #8888a0;
-            position: relative;
-            z-index: 2;
-        }
-
         /* ================= MOBILE ================= */
-        @media(max-width:768px) {
-            .footer-container {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .footer-logo {
-                margin: auto auto 20px;
-                display: table;
-            }
+        @media screen and (max-width: 768px) {
+            .hero-banner { height: 350px; }
+            .hero-banner h1 { font-size: 2.2rem; }
+            .hero-banner p { font-size: 1.1rem; }
         }
     </style>
 
@@ -375,10 +213,21 @@
 
 <body>
 
+    @php $__companyHeader = \App\Models\CompanyDetail::first(); @endphp
+
     <!-- HEADER -->
     <div class="top-header">
         <div class="container d-flex justify-content-between align-items-center">
-            <div class="fw-bold logo-text">CRACKERTIME</div>
+            {{-- Show uploaded logo image if set, otherwise show text --}}
+            @if($__companyHeader && $__companyHeader->logo)
+                <a href="{{ url('/') }}" style="line-height:0;">
+                    <img src="{{ asset($__companyHeader->logo) }}"
+                         alt="{{ $__companyHeader->company_name ?? 'CrackerTime' }}"
+                         class="header-logo-img">
+                </a>
+            @else
+                <div class="fw-bold logo-text">{{ $__companyHeader->company_name ?? 'CRACKERTIME' }}</div>
+            @endif
 
             <!-- Desktop Nav -->
             <div class="d-none d-lg-block ms-auto me-4">
@@ -386,6 +235,11 @@
                 <a href="{{ url('/about') }}">About</a>
                 <a href="{{ url('/blog') }}">Blog</a>
                 <a href="{{ url('/contact') }}">Contact</a>
+                @if(\App\Models\SiteSetting::bool('show_pricelist_download', true))
+                <a href="{{ route('download.products') }}" class="btn rounded-pill ms-2" style="background-color: #ff9900; color: #fff !important; padding: 6px 16px; font-weight: 600; font-size: 14px; text-decoration: none;">
+                    <i class="fas fa-download me-1"></i> Products List
+                </a>
+                @endif
             </div>
 
             <!-- Mobile Actions -->
@@ -404,6 +258,13 @@
             <a href="{{ url('/about') }}">About</a>
             <a href="{{ url('/blog') }}">Blog</a>
             <a href="{{ url('/contact') }}">Contact</a>
+            @if(\App\Models\SiteSetting::bool('show_pricelist_download', true))
+            <div class="p-3">
+                <a href="{{ route('download.products') }}" class="btn w-100 rounded-pill" style="background-color: #ff9900; color: #fff !important; padding: 10px; font-weight: 600; text-align: center; border-bottom: none;">
+                    <i class="fas fa-download me-1"></i> Download Products List
+                </a>
+            </div>
+            @endif
         </div>
     </div>
 
@@ -422,57 +283,12 @@
         @yield('content')
     </div>
 
-    <!-- FOOTER -->
-    <footer class="site-footer">
-        <div class="footer-container">
-            <!-- Logo & Tagline -->
-            <div>
-                <div class="footer-logo">CrackerTime</div>
-                <p class="footer-tagline">Premium quality crackers for all your celebrations. Safe, colorful, and
-                    memorable moments guaranteed.</p>
-
-                <div class="latest-posts" style="margin-top:20px;">
-                    <h4>Latest Posts</h4>
-                    <p><a href="{{ route('blog') }}#science-behind-the-sparkle"
-                            style="color:white; text-decoration:none;">The Science Behind the Sparkle</a></p>
-                    <p><a href="{{ route('blog') }}#eco-friendly-crackers-2025"
-                            style="color:white; text-decoration:none;">Top 10 Eco-Friendly Crackers</a></p>
-                    <p><a href="{{ route('blog') }}#cracker-safety-guide"
-                            style="color:white; text-decoration:none;">Ultimate Guide to Cracker Safety</a></p>
-                </div>
-            </div>
-
-            <!-- Quick Links -->
-            <div class="footer-links">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="{{ url('/') }}">Home</a></li>
-                    <li><a href="{{ route('about') }}">About Us</a></li>
-                    <li><a href="{{ route('contact') }}">Contact</a></li>
-                    <li><a href="{{ route('blog') }}">Blogs</a></li>
-                </ul>
-            </div>
-
-            <!-- Contact Info -->
-            <div class="footer-contact">
-                <h4>Contact Info</h4>
-                <p><i class="fas fa-phone"></i> +919488864547</p>
-                <p><i class="fas fa-envelope"></i> crackerstime.com@gmail.com</p>
-                <p><i class="fas fa-map-marker-alt"></i> Door No 2/554/C3, Southside school Near Sivakasi to Sattur main
-                    road, Mettamalai, Sivakasi - 626203</p>
-            </div>
-        </div>
-
-        <div class="footer-line"></div>
-        <div class="footer-copy">
-            © 2025 Crackers Time. All rights reserved. | Delivery Available
-            <br>
-            Powered by Aspirentech Solution
-        </div>
-    </footer>
+    {{-- FOOTER: Common UI --}}
+    @include('layouts.partials.footer')
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- ✅ FIXED AJAX SINGLE PAGE LOADER -->
     <script>

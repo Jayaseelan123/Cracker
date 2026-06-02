@@ -1,4 +1,4 @@
-@extends('layouts.front')
+@extends('layouts.app')
 
 @section('title', 'Shopping Cart')
 @section('hero_title', 'Your Shopping Cart')
@@ -248,23 +248,45 @@
             const productId = e.target.getAttribute('data-id');
             const cartItem = document.querySelector('.cart-item-product-' + productId);
             
-            // Remove from DOM
-            if (cartItem) cartItem.remove();
-            
-            fetch('/cart/ajax/remove/' + productId, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
+            Swal.fire({
+                title: 'Remove item?',
+                text: "Are you sure you want to remove this item from your cart?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ff9800',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, remove it!',
+                cancelButtonText: 'Keep it',
+                background: '#fff',
+                borderRadius: '15px'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Remove from DOM
+                    if (cartItem) cartItem.remove();
+                    
+                    fetch('/cart/ajax/remove/' + productId, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        updateCartDisplay();
+                        Swal.fire({
+                            title: 'Removed!',
+                            text: 'The item has been removed from your cart.',
+                            icon: 'success',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        location.reload();
+                    });
                 }
-            })
-            .then(response => response.json())
-            .then(data => {
-                updateCartDisplay();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                location.reload();
             });
         }
     });

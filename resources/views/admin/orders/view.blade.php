@@ -210,12 +210,16 @@
                         <span class="info-value">{{ $order->customer_address ?? '-' }}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">City:</span>
+                        <span class="info-label">District / City:</span>
                         <span class="info-value">{{ $order->city ?? '-' }}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Place:</span>
                         <span class="info-value">{{ $order->place ?? '-' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">State:</span>
+                        <span class="info-value">{{ $order->state ?? '-' }}</span>
                     </div>
                 </div>
             </div>
@@ -241,7 +245,7 @@
                 <tbody>
                     @forelse($order->items as $item)
                     <tr>
-                        <td>{{ $item->product->name_en ?? $item->product->name ?? 'N/A' }}</td>
+                        <td>{{ optional($item->product)->name_en ?? optional($item->product)->name ?? 'Product Deleted' }}</td>
                         <td style="text-align:center;">{{ $item->quantity }}</td>
                         <td style="text-align:right;">Rs. {{ number_format($item->price, 2) }}</td>
                         <td style="text-align:right; font-weight:600;">Rs. {{ number_format($item->total, 2) }}</td>
@@ -259,9 +263,35 @@
 
     <!-- TOTAL -->
     <div class="total-section">
-        <div class="grand-total-box">
-            <div class="grand-total-label">TOTAL AMOUNT</div>
-            <div class="grand-total-amount">Rs. {{ number_format($order->total_amount, 2) }}</div>
+        <div class="grand-total-box" style="min-width: 350px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: #666;">
+                <span>Sub Total:</span>
+                <span>Rs. {{ number_format($order->items->sum('total'), 2) }}</span>
+            </div>
+            @if(($order->packing_charges ?? 0) > 0)
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: #666;">
+                <span>Packing Charges:</span>
+                <span>Rs. {{ number_format($order->packing_charges, 2) }}</span>
+            </div>
+            @endif
+            @php
+                $sub = (float) $order->items->sum('total');
+                $pack = (float) ($order->packing_charges ?? 0);
+                $total = $sub + $pack;
+                $rounded = round($total);
+                $roundOff = $rounded - $total;
+            @endphp
+            @if(abs($roundOff) > 0.01)
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: #666;">
+                <span>Round OFF:</span>
+                <span>Rs. {{ number_format($roundOff, 2) }}</span>
+            </div>
+            @endif
+            <hr style="margin: 10px 0; border: 0; border-top: 1px solid #ddd;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="grand-total-label" style="font-size: 15px; font-weight: bold; color: #333;">OVERALL AMOUNT:</span>
+                <span class="grand-total-amount" style="font-size: 26px; font-weight: 800; color: #6a5acd; margin-top: 0;">Rs. {{ number_format($rounded, 2) }}</span>
+            </div>
         </div>
     </div>
 

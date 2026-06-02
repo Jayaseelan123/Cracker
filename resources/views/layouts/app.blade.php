@@ -52,7 +52,7 @@
             transition: color 0.3s ease;
         }
 
-        .top-header a:not(.cart-btn)::after {
+        .top-header a:not(.cart-btn):not(.btn)::after {
             content: '';
             position: absolute;
             width: 0;
@@ -64,11 +64,11 @@
             border-radius: 2px;
         }
 
-        .top-header a:not(.cart-btn):hover {
+        .top-header a:not(.cart-btn):not(.btn):hover {
             color: #ff9900;
         }
 
-        .top-header a:not(.cart-btn):hover::after {
+        .top-header a:not(.cart-btn):not(.btn):hover::after {
             width: 100%;
         }
 
@@ -81,6 +81,92 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 2px 10px rgba(255, 153, 0, 0.3);
+        }
+
+        /* Header logo image (when company logo is uploaded) */
+        .header-logo-img {
+            max-height: 48px;
+            max-width: 160px;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* ---------------- PREMIUM NAVBAR DROPDOWN ---------------- */
+        .dropdown-toggle::after {
+            display: none; /* Hide default arrow */
+        }
+
+        .dropdown-menu {
+            display: block;
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,0,0,0.05) !important;
+            width: fit-content !important;
+            min-width: 150px !important;
+            max-width: 280px !important;
+            max-height: 300px; /* Scroll only */
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+
+        .dropdown-menu::-webkit-scrollbar {
+            width: 4px;
+        }
+        .dropdown-menu::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+            font-size: 0.85rem !important; /* Reduced font size */
+            padding: 8px 12px !important; /* Reduced padding */
+        }
+
+        .dropdown-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: rgba(13, 107, 138, 0.05);
+            z-index: -1;
+            transition: width 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .dropdown-item:hover {
+            color: #0d6b8a !important;
+            transform: translateX(5px);
+            background: transparent !important;
+        }
+
+        .dropdown-item:hover::before {
+            width: 100%;
+        }
+
+        .dropdown-icon {
+            transition: transform 0.3s ease;
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+        .dropdown:hover .dropdown-icon {
+            transform: rotate(180deg);
+            color: #ff9900;
         }
 
         /* ---------------- HERO BANNER SLIDER ---------------- */
@@ -216,10 +302,10 @@
 
         /* Fallback static hero when no banners */
         .hero-banner {
-            background: linear-gradient(135deg, rgba(13,107,138,0.9), rgba(6,54,71,0.9)), url("{{ asset('images/hero.jpg') }}");
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url("{{ asset('images/hero2.jpg') }}");
             background-size: cover;
             background-position: center;
-            height: 600px;
+            height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -230,23 +316,219 @@
         }
 
         .hero-banner h1 {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 900;
             text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+            margin-bottom: 5px;
         }
 
         .hero-banner p {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             opacity: 0.9;
         }
 
-        .category-header {
-            background-color: rgb(13, 107, 138);
-            color: white;
-            padding: 10px;
-            font-weight: bold;
+        /* ---------------- CATEGORY EXPLORER ---------------- */
+        .category-explorer-section {
+            padding: 40px 0;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #134e5e 0%, #71b280 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
             text-transform: uppercase;
-            margin-top: 20px;
+        }
+
+        .title-underline {
+            width: 80px;
+            height: 4px;
+            background: #ffcc00; /* Yellow underline like the image */
+            margin: 0 auto;
+            border-radius: 2px;
+        }
+
+        .category-grid {
+            display: flex;
+            flex-wrap: nowrap; /* Change to nowrap for carousel */
+            justify-content: flex-start;
+            gap: 30px;
+            padding: 20px 60px; /* Padding for arrows */
+        }
+
+        .category-carousel-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .carousel-scroll {
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scroll-snap-type: x mandatory;
+        }
+
+        .carousel-scroll::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        .category-card {
+            flex: 0 0 auto; /* Prevent shrinking */
+            scroll-snap-align: center;
+            text-decoration: none !important;
+            color: #333;
+            text-align: center;
+            width: 160px;
+            transition: transform 0.3s ease;
+        }
+
+        .carousel-nav-btn {
+            position: absolute;
+            top: 40%;
+            transform: translateY(-50%);
+            width: 45px;
+            height: 45px;
+            background: #fff;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            z-index: 10;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0d6b8a;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-nav-btn:hover {
+            background: #ffcc00;
+            color: #fff;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-nav-btn.prev { left: 5px; }
+        .carousel-nav-btn.next { right: 5px; }
+
+        .category-card {
+            text-decoration: none !important;
+            color: #333;
+            text-align: center;
+            width: 160px;
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .category-img-container {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%; /* Circular like the image */
+            overflow: hidden;
+            margin: 0 auto 15px;
+            border: 5px solid #fff;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            background: #f8f9fa;
+            transition: border-color 0.3s ease;
+        }
+
+        .category-card:hover .category-img-container {
+            border-color: #ffcc00;
+        }
+
+        .category-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .category-card:hover img {
+            transform: scale(1.15);
+        }
+
+        .category-card-name {
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #444;
+            line-height: 1.3;
+        }
+
+        @media (max-width: 768px) {
+            .category-card {
+                width: 120px;
+            }
+            .category-img-container {
+                width: 100px;
+                height: 100px;
+            }
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+
+        .category-header {
+            background: linear-gradient(90deg, #0d6b8a 0%, #1a8ab0 100%);
+            color: white;
+            padding: 18px 30px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 50px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 30px rgba(13, 107, 138, 0.2);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: slideInLeft 0.8s ease-out forwards;
+            border-left: 6px solid #ff9900;
+        }
+
+        .category-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .category-header:hover {
+            transform: translateX(10px) scale(1.01);
+            box-shadow: 0 15px 40px rgba(13, 107, 138, 0.3);
+        }
+
+        .category-header:hover::before {
+            left: 100%;
+        }
+
+        .category-header i {
+            font-size: 1.4rem;
+            color: #ff9900;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .product-table th {
@@ -490,7 +772,7 @@
             }
 
             .hero-banner {
-                height: 280px;
+                height: 220px;
                 background-attachment: scroll;
             }
 
@@ -545,224 +827,8 @@
             }
         }
 
-        /* FOOTER RESPONSIVE */
-        @media (max-width: 768px) {
-            .site-footer {
-                text-align: center;
-                padding: 30px 0 10px;
-            }
 
-            .site-footer .row>div {
-                margin-bottom: 25px;
-            }
 
-            .site-footer .footer-logo img {
-                max-width: 160px;
-                margin: 0 auto 15px;
-            }
-
-            .site-footer .footer-tagline {
-                margin: 0 auto;
-            }
-
-            .site-footer .footer-contact i {
-                margin-right: 5px;
-            }
-        }
-
-        /* ================= FOOTER MAIN ================= */
-        .site-footer {
-            background: linear-gradient(135deg, #0a4f68 0%, #063647 100%);
-            color: #e0e0e0;
-            padding: 70px 0 30px;
-            font-family: 'Inter', Arial, sans-serif;
-            margin-top: 60px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .site-footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #ff9900, #ff3b3b);
-        }
-
-        /* Layout */
-        .footer-container {
-            max-width: 1200px;
-            margin: auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: 2fr 1fr 2fr;
-            gap: 50px;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* ================= LOGO ================= */
-        .footer-logo {
-            color: #fff;
-            font-size: 32px;
-            font-weight: 900;
-            display: inline-block;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #ff9900, #ff3b3b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Tagline */
-        .footer-tagline {
-            line-height: 1.8;
-            max-width: 420px;
-            opacity: 0.85;
-            color: #b0b0c0;
-            margin-bottom: 0;
-            font-size: 15px;
-        }
-
-        /* ================= HEADINGS ================= */
-        .site-footer h4 {
-            margin-bottom: 25px;
-            font-size: 18px;
-            color: #fff;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            display: inline-block;
-        }
-
-        .site-footer h4::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: -8px;
-            width: 40px;
-            height: 2px;
-            background: #ff9900;
-            border-radius: 2px;
-        }
-
-        /* ================= LINKS ================= */
-        .footer-links ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-
-        .footer-links a {
-            color: #b0b0c0;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            display: inline-block;
-        }
-
-        .footer-links a:hover {
-            color: #ff9900;
-            transform: translateX(5px);
-        }
-
-        /* ================= CONTACT ================= */
-        .footer-contact p {
-            margin-bottom: 15px;
-            line-height: 1.6;
-            color: #b0b0c0;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            font-size: 15px;
-        }
-
-        .footer-contact i {
-            color: #ff9900;
-            font-size: 18px;
-            margin-top: 3px;
-        }
-
-        /* ================= LATEST POSTS ================= */
-        .latest-posts p {
-            margin-bottom: 12px;
-            line-height: 1.6;
-        }
-
-        .latest-posts a {
-            color: #b0b0c0 !important;
-            text-decoration: none !important;
-            transition: all 0.3s ease;
-        }
-
-        .latest-posts a:hover {
-            color: #ff9900 !important;
-        }
-
-        /* ================= DIVIDER ================= */
-        .footer-line {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin: 50px 0 25px;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* ================= COPYRIGHT ================= */
-        .footer-copy {
-            text-align: center;
-            font-size: 14px;
-            color: #8888a0;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* ================= MOBILE ================= */
-        @media(max-width:768px) {
-            .footer-container {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .footer-logo {
-                margin: auto auto 20px;
-                display: table;
-            }
-        }
-
-        .site-footer .footer-contact p {
-            margin-bottom: 8px;
-            color: rgba(243, 243, 247, 0.95);
-        }
-
-        .site-footer .footer-contact i {
-            width: 20px;
-            display: inline-block;
-        }
-
-        .site-footer .footer-hr {
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            margin: 22px 0;
-        }
-
-        .site-footer .footer-copy {
-            text-align: center;
-            padding-bottom: 8px;
-            color: rgba(243, 243, 247, 0.9);
-        }
-
-        @media (max-width: 767px) {
-            .site-footer {
-                padding: 32px 0 12px;
-            }
-
-            .site-footer .footer-logo img {
-                max-width: 180px;
-            }
-        }
 
         /* Cleaned duplicate cart button css */
 
@@ -911,7 +977,7 @@
             }
 
             .hero-banner {
-                height: 350px !important;
+                height: 220px !important;
                 margin-top: 60px !important;
             }
         }
@@ -1040,19 +1106,53 @@
 
 <body>
 
-    <!-- HEADER -->
+    @php $__companyHeader = \App\Models\CompanyDetail::first(); @endphp
+
     <!-- HEADER -->
     <div class="top-header">
         <div class="container d-flex justify-content-between align-items-center">
 
-            <div class="fw-bold logo-text">CRACKERTIME</div>
+            {{-- Show uploaded company logo or fallback to text --}}
+            @if($__companyHeader && $__companyHeader->logo)
+                <a href="{{ url('/') }}" style="line-height:0;">
+                    <img src="{{ asset($__companyHeader->logo) }}"
+                         alt="{{ $__companyHeader->company_name ?? 'CrackerTime' }}"
+                         class="header-logo-img">
+                </a>
+            @else
+                <div class="fw-bold logo-text">{{ $__companyHeader->company_name ?? 'CRACKERTIME' }}</div>
+            @endif
 
             <!-- Desktop Nav - Pushed to Right -->
             <div class="d-none d-lg-block ms-auto me-4">
                 <a href="{{ url('/') }}">Home</a>
+
+                @php $headerCats = \App\Models\Category::all(); @endphp
+                <div class="dropdown d-inline-block">
+                    <a href="#" class="dropdown-toggle d-flex align-items-center gap-1" data-bs-toggle="dropdown" aria-expanded="false">
+                        Categories
+                        <i class="fas fa-chevron-down small dropdown-icon"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-4 p-2 mt-3" style="min-width: 220px;">
+                        @foreach($headerCats as $hCat)
+                        <li>
+                            <a class="dropdown-item rounded-3 py-2 px-3 fw-semibold text-dark nav-category-link" 
+                               href="{{ url('/') }}#cat-{{ $hCat->slug ?? Str::slug($hCat->name) }}">
+                                {{ $hCat->name }}
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+
                 <a href="{{ url('/about') }}">About</a>
                 <a href="{{ url('/blog') }}">Blog</a>
                 <a href="{{ url('/contact') }}">Contact</a>
+                @if(\App\Models\SiteSetting::bool('show_pricelist_download', true))
+                <a href="{{ route('download.products') }}" class="btn rounded-pill ms-2" style="background-color: #ff9900; color: #fff !important; padding: 6px 16px; font-weight: 600; font-size: 14px; text-decoration: none;">
+                    <i class="fas fa-download me-1"></i> Products List
+                </a>
+                @endif
             </div>
 
             <!-- Right Actions (Cart + Burger) -->
@@ -1075,9 +1175,22 @@
     <div class="mobile-menu-container d-lg-none" id="mobileMenuContainer">
         <div class="mobile-menu-nav">
             <a href="{{ url('/') }}">Home</a>
+            
+            <div class="fw-bold px-2 py-2 text-primary small text-uppercase">Categories</div>
+            @foreach(\App\Models\Category::all() as $mCat)
+                <a href="{{ url('/') }}#cat-{{ $mCat->slug ?? Str::slug($mCat->name) }}" class="ps-4 nav-category-link">{{ $mCat->name }}</a>
+            @endforeach
+
             <a href="{{ url('/about') }}">About</a>
             <a href="{{ url('/blog') }}">Blog</a>
             <a href="{{ url('/contact') }}">Contact</a>
+            @if(\App\Models\SiteSetting::bool('show_pricelist_download', true))
+            <div class="p-3">
+                <a href="{{ route('download.products') }}" class="btn w-100 rounded-pill" style="background-color: #ff9900; color: #fff !important; padding: 10px; font-weight: 600; text-align: center; border-bottom: none;">
+                    <i class="fas fa-download me-1"></i> Products List
+                </a>
+            </div>
+            @endif
         </div>
     </div>
 
@@ -1119,9 +1232,6 @@
     @endif
 
     <div class="container my-4">
-        <div class="mt-2'">
-            <h3>Products</h3>
-        </div>
         @yield('content')
     </div>
 
@@ -1130,54 +1240,8 @@
         @include('front.partials.drawer', ['cart' => session('cart', [])])
     </div>
 
-    <!-- FOOTER -->
-    <footer class="site-footer">
-        <div class="footer-container">
-            <!-- Logo & Tagline -->
-            <div>
-                <div class="footer-logo">CrackerTime</div>
-                <p class="footer-tagline">Premium quality crackers for all your celebrations. Safe, colorful, and
-                    memorable moments guaranteed.</p>
-
-                <div class="latest-posts" style="margin-top:20px;">
-                    <h4>Latest Posts</h4>
-                    <p><a href="{{ route('blog') }}#science-behind-the-sparkle"
-                            style="color:white; text-decoration:none;">The Science Behind the Sparkle</a></p>
-                    <p><a href="{{ route('blog') }}#eco-friendly-crackers-2025"
-                            style="color:white; text-decoration:none;">Top 10 Eco-Friendly Crackers</a></p>
-                    <p><a href="{{ route('blog') }}#cracker-safety-guide"
-                            style="color:white; text-decoration:none;">Ultimate Guide to Cracker Safety</a></p>
-                </div>
-            </div>
-
-            <!-- Quick Links -->
-            <div class="footer-links">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="{{ url('/') }}">Home</a></li>
-                    <li><a href="{{ route('about') }}">About Us</a></li>
-                    <li><a href="{{ route('contact') }}">Contact</a></li>
-                    <li><a href="{{ route('blog') }}">Blogs</a></li>
-                </ul>
-            </div>
-
-            <!-- Contact Info -->
-            <div class="footer-contact">
-                <h4>Contact Info</h4>
-                <p><i class="fas fa-phone"></i> +919488864547</p>
-                <p><i class="fas fa-envelope"></i> crackerstime.com@gmail.com</p>
-                <p><i class="fas fa-map-marker-alt"></i> Door No 2/554/C3, Southside school Near Sivakasi to Sattur main
-                    road, Mettamalai, Sivakasi - 626203</p>
-            </div>
-        </div>
-
-        <div class="footer-line"></div>
-        <div class="footer-copy">
-            © 2025 Crackers Time. All rights reserved. | Delivery Available
-            <br>
-            Powered by Aspirentech Solution
-        </div>
-    </footer>
+    {{-- FOOTER: Common UI --}}
+    @include('layouts.partials.footer')
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -1222,76 +1286,222 @@
             /* --------------------------- ATTACH LISTENERS INSIDE DRAWER --------------------------- */
             function attachListeners() {
 
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+                /* --- Close button --- */
                 const closeBtn = panel.querySelector('#closeCartPanelPartial');
                 if (closeBtn) closeBtn.addEventListener('click', () => panel.classList.remove('open'));
 
-                /* --- Drawer + button add --- */
+                /* --- Qty input (cdr-qty-input): update cart on change --- */
+                panel.querySelectorAll('.cdr-qty-input').forEach(input => {
+                    input.addEventListener('change', function () {
+                        const id  = input.dataset.id;
+                        const qty = Math.max(1, parseInt(input.value) || 1);
+                        input.value = qty;
+
+                        fetch(ajaxUpdateBase + id, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ quantity: qty })
+                        })
+                            .then(r => r.json())
+                            .then(data => {
+                                updateBadge(data.cart);
+                                refreshDrawer(data.cart);
+                            })
+                            .catch(err => console.error('Qty update failed', err));
+                    });
+                });
+
+                /* --- Drawer + button add (legacy support) --- */
                 panel.querySelectorAll('.qty-plus').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const id = btn.dataset.id;
                         btn.disabled = true;
-
                         fetch(ajaxAddBase + id, {
-                            method: "POST",
-                            headers: {
-                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
-                                "Accept": "application/json"
-                            }
+                            method: 'POST',
+                            headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' }
                         })
                             .then(r => r.json())
-                            .then(data => {
-                                updateBadge(data.cart);
-                                refreshDrawer(data.cart);
-                            })
+                            .then(data => { updateBadge(data.cart); refreshDrawer(data.cart); })
                             .finally(() => btn.disabled = false);
                     });
                 });
 
-                /* --- Drawer - button reduce --- */
+                /* --- Drawer - button reduce (legacy support) --- */
                 panel.querySelectorAll('.qty-minus').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const id = btn.dataset.id;
                         btn.disabled = true;
-
                         fetch(ajaxDecreaseBase + id, {
-                            method: "POST",
-                            headers: {
-                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
-                                "Content-Type": "application/json",
-                                "Accept": "application/json"
-                            },
-                            // body: JSON.stringify({ action: "decrease" }) // No body needed for decrease
+                            method: 'POST',
+                            headers: { 'X-CSRF-TOKEN': csrfToken, 'Content-Type': 'application/json', 'Accept': 'application/json' }
                         })
                             .then(r => r.json())
-                            .then(data => {
-                                updateBadge(data.cart);
-                                refreshDrawer(data.cart);
-                            })
+                            .then(data => { updateBadge(data.cart); refreshDrawer(data.cart); })
                             .finally(() => btn.disabled = false);
                     });
                 });
 
-                /* --- Drawer remove button --- */
+                /* --- Drawer remove (×) button --- */
                 panel.querySelectorAll('.qty-remove').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const id = btn.dataset.id;
                         btn.disabled = true;
-
-                        fetch("/cart/ajax/remove/" + id, {
-                            method: "POST",
-                            headers: {
-                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
-                                "Accept": "application/json"
-                            }
+                        fetch('/cart/ajax/remove/' + id, {
+                            method: 'POST',
+                            headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' }
                         })
                             .then(r => r.json())
-                            .then(data => {
-                                updateBadge(data.cart);
-                                refreshDrawer(data.cart);
-                            })
+                            .then(data => { updateBadge(data.cart); refreshDrawer(data.cart); })
                             .finally(() => btn.disabled = false);
                     });
                 });
+
+                /* --- Panel Toggles & Form Logic --- */
+                const goToFormBtn = panel.querySelector('#cdrGoToForm');
+                if (goToFormBtn) {
+                    goToFormBtn.addEventListener('click', () => {
+                        const p1 = panel.querySelector('#cdrPanel1');
+                        const p2 = panel.querySelector('#cdrPanel2');
+                        if (p1 && p2) {
+                            p1.style.display = 'none';
+                            p2.style.display = '';
+                        }
+                    });
+                }
+
+                const backBtn = panel.querySelector('#cdrBackBtn');
+                if (backBtn) {
+                    backBtn.addEventListener('click', () => {
+                        const p1 = panel.querySelector('#cdrPanel1');
+                        const p2 = panel.querySelector('#cdrPanel2');
+                        if (p1 && p2) {
+                            p2.style.display = 'none';
+                            p1.style.display = '';
+                        }
+                    });
+                }
+
+                const stateSelect = panel.querySelector('#cdrStateSelect');
+                if (stateSelect) {
+                    stateSelect.addEventListener('change', () => {
+                        var opt = stateSelect.options[stateSelect.selectedIndex];
+                        if (!opt || !opt.value) {
+                            cdrUpdateTotals(0, 0);
+                            return;
+                        }
+
+                        var packing = parseFloat(opt.dataset.packing || 0);
+                        var minOrder = parseFloat(opt.dataset.min || 0);
+                        var allCities = opt.dataset.allcities === '1';
+                        var cities = [];
+                        try { cities = JSON.parse(opt.dataset.cities || '[]'); } catch(e){}
+
+                        var citySelect = panel.querySelector('#cdrCitySelect');
+
+                        if (citySelect) {
+                            citySelect.innerHTML = '<option value="">-- Select District / City --</option>';
+                            if (!allCities && cities.length > 0) {
+                                // Specific cities → add them as options
+                                cities.forEach(function(c) {
+                                    var o = document.createElement('option');
+                                    o.value = o.textContent = c;
+                                    citySelect.appendChild(o);
+                                });
+                            } else {
+                                // All Districts enabled → add "All Districts" as the single option
+                                var o = document.createElement('option');
+                                o.value = o.textContent = 'All Districts';
+                                o.selected = true;
+                                citySelect.appendChild(o);
+                            }
+                            // Ensure the dropdown is visible
+                            citySelect.style.display = '';
+                        }
+
+                        cdrUpdateTotals(packing, minOrder);
+                    });
+                    
+                    // Trigger change on load to populate cities if a state is already selected
+                    if (stateSelect.value) {
+                        stateSelect.dispatchEvent(new Event('change'));
+                    }
+                }
+
+                function cdrUpdateTotals(packing, minOrder) {
+                    var wrap = panel.querySelector('#cdrWrap');
+                    var subtotalVal = parseFloat(wrap ? wrap.dataset.subtotal : 0) || 0;
+                    var total = subtotalVal + packing;
+                    var rounded = Math.round(total);
+                    var roundOff = rounded - total;
+
+                    var minRow = panel.querySelector('#cdrMinOrderRow');
+                    var minVal = panel.querySelector('#cdrMinOrderVal');
+                    if (minRow && minVal) {
+                        if (minOrder > 0) {
+                            minRow.style.display = '';
+                            minVal.textContent = '₹\u00a0' + minOrder.toLocaleString('en-IN');
+                        } else {
+                            minRow.style.display = 'none';
+                        }
+                    }
+
+                    var packRow = panel.querySelector('#cdrPackingRow');
+                    var packLabel = panel.querySelector('#cdrPackingLabel');
+                    var packVal = panel.querySelector('#cdrPackingVal');
+                    if (packRow && packLabel && packVal) {
+                        if (packing > 0) {
+                            packRow.style.display = '';
+                            packLabel.textContent = 'Packing Charges (' + packing + ')';
+                            packVal.textContent = '₹\u00a0' + packing.toLocaleString('en-IN', {minimumFractionDigits:2});
+                        } else {
+                            packRow.style.display = 'none';
+                        }
+                    }
+
+                    var roundOffEl = panel.querySelector('#cdrRoundOff');
+                    if (roundOffEl) roundOffEl.textContent = '₹\u00a0' + roundOff.toFixed(2);
+
+                    var overallAmtEl = panel.querySelector('#cdrOverallAmt');
+                    if (overallAmtEl) overallAmtEl.textContent = '₹\u00a0' + rounded.toLocaleString('en-IN', {minimumFractionDigits:2});
+
+                    var packingHiddenEl = panel.querySelector('#cdrPackingHidden');
+                    if (packingHiddenEl) packingHiddenEl.value = packing;
+                }
+
+                const estimateForm = panel.querySelector('#cdrEstimateForm');
+                if (estimateForm) {
+                    estimateForm.addEventListener('submit', (e) => {
+                        const stateSelect = panel.querySelector('#cdrStateSelect');
+                        if (stateSelect) {
+                            const opt = stateSelect.options[stateSelect.selectedIndex];
+                            if (opt && opt.value) {
+                                const minOrder = parseFloat(opt.dataset.min || 0);
+                                const wrap = panel.querySelector('#cdrWrap');
+                                const subtotalVal = parseFloat(wrap ? wrap.dataset.subtotal : 0) || 0;
+                                
+                                if (minOrder > 0 && subtotalVal < minOrder) {
+                                    e.preventDefault();
+                                    if (typeof Swal !== 'undefined') {
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Minimum Order Requirement',
+                                            html: 'Minimum order amount for <strong>' + opt.value + '</strong> is <strong>₹' + minOrder.toLocaleString('en-IN') + '</strong>.<br><br>Your current subtotal is <strong>₹' + subtotalVal.toLocaleString('en-IN') + '</strong>. Please add more items to proceed.',
+                                            confirmButtonColor: '#8B1A1A'
+                                        });
+                                    } else {
+                                        alert('Minimum order amount for ' + opt.value + ' is ₹' + minOrder.toLocaleString('en-IN') + '. Your subtotal is ₹' + subtotalVal.toLocaleString('en-IN') + '.');
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
 
             }
 
@@ -1331,7 +1541,7 @@
                             refreshDrawer(data.cart);
 
                             // Show success message
-                            showToast('Product Quantity added', 'success');
+                            showToast('product added to cart', 'success');
                         })
                         .finally(() => el.disabled = false);
                 }
@@ -1362,7 +1572,7 @@
                             refreshDrawer(data.cart);
 
                             // Show success message
-                            showToast('Product quantity Reduced!', 'success');
+                            showToast('product reduced to cart', 'success');
                         })
                         .finally(() => el.disabled = false);
                 }
@@ -1481,7 +1691,7 @@
                             if (qtyInput) qtyInput.value = newQty;
                             if (qtyInputM) qtyInputM.value = newQty;
 
-                            showToast('Product quantity Reduced!', 'success'); // ✅ Toast
+                            showToast('product reduced to cart', 'success'); // ✅ Toast
                         } else {
                             showToast("Something went wrong", 'error');
                         }
@@ -1542,6 +1752,59 @@
             mobileBurgerBtn.addEventListener('click', () => {
                 mobileMenuContainer.classList.toggle('open');
             });
+        }
+
+        // Smooth Scroll for Category Links
+        document.querySelectorAll('.nav-category-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href.includes('#cat-')) {
+                    const targetId = href.split('#')[1];
+                    const targetEl = document.getElementById(targetId);
+                    
+                    if (targetEl && (window.location.pathname === '/' || window.location.pathname === '{{ url('/') }}')) {
+                        e.preventDefault();
+                        
+                        // Close mobile menu if it's open
+                        if (mobileMenuContainer) mobileMenuContainer.classList.remove('open');
+                        
+                        const offset = 90; // Fixed header offset
+                        const elementPosition = targetEl.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Optional: Update URL hash without jumping
+                        history.pushState(null, null, '#' + targetId);
+                    }
+                }
+            });
+        });
+
+        // Category Carousel Logic
+        const catCarousel = document.getElementById('catCarousel');
+        const catPrev = document.getElementById('catPrev');
+        const catNext = document.getElementById('catNext');
+
+        if (catCarousel && catPrev && catNext) {
+            catNext.addEventListener('click', () => {
+                catCarousel.scrollBy({ left: 300, behavior: 'smooth' });
+            });
+            catPrev.addEventListener('click', () => {
+                catCarousel.scrollBy({ left: -300, behavior: 'smooth' });
+            });
+
+            // Hide arrows if not scrollable
+            const toggleArrows = () => {
+                catPrev.style.display = catCarousel.scrollLeft <= 0 ? 'none' : 'flex';
+                catNext.style.display = catCarousel.scrollLeft + catCarousel.clientWidth >= catCarousel.scrollWidth ? 'none' : 'flex';
+            };
+            catCarousel.addEventListener('scroll', toggleArrows);
+            window.addEventListener('resize', toggleArrows);
+            toggleArrows();
         }
     </script>
 
@@ -1608,6 +1871,7 @@
         startAutoPlay();
     })();
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @stack('scripts')
 
 </body> 

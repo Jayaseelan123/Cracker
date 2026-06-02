@@ -1,4 +1,4 @@
-@extends('layouts.front')
+@extends('layouts.app')
 
 @section('title', 'About Us - Crackers Time')
 @section('hero_title', 'About Crackers Time')

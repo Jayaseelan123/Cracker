@@ -2,23 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContactInquiry;
+
 use App\Models\Banner;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class FrontController extends Controller
 {
     public function index()
     {
-        // Get all categories with their products
-        $categories = Category::with('products')->get();
+        // Get all categories with their active products
+        $categories = Category::with(['products' => function($query) {
+            $query->where('status', 'Active');
+        }])->get();
         // Get active banners for the homepage hero slider
         $banners = Banner::where('is_active', true)->latest()->get();
         return view('front.index', compact('categories', 'banners'));
+    }
+
+    public function downloadProducts()
+    {
+        // Strictly Auto-generate PDF based on the active website products
+        $categories = Category::with(['products' => function($query) {
+            $query->where('status', 'Active');
+        }])->whereHas('products', function($query) {
+            $query->where('status', 'Active');
+        })->get();
+        
+        $company = \App\Models\CompanyDetail::first();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('front.products-pdf', compact('categories', 'company'));
+        return $pdf->download('CrackerTime_Products_List.pdf');
     }
 
     public function about()
@@ -29,6 +50,18 @@ class FrontController extends Controller
     public function contact()
     {
         return view('front.contact');
+    }
+
+    public function terms()
+    {
+        $sections = \App\Models\TermsSection::ofType('terms')->get();
+        return view('front.terms', compact('sections'));
+    }
+
+    public function privacy()
+    {
+        $sections = \App\Models\TermsSection::ofType('privacy')->get();
+        return view('front.privacy', compact('sections'));
     }
 
     public function checkout()
@@ -194,14 +227,17 @@ class FrontController extends Controller
     public function contactSubmit(\Illuminate\Http\Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:191',
-            'email' => 'required|email|max:191',
+            'name'    => 'required|string|max:191',
+            'email'   => 'required|email|max:191',
             'message' => 'required|string',
         ]);
 
-        // For now, just log the contact request and flash success. If you
-        // want emails, we can wire Mail later.
-        logger()->info('Contact form submitted', $data);
+        ContactInquiry::create([
+            'name'    => $data['name'],
+            'email'   => $data['email'],
+            'message' => $data['message'],
+            'status'  => 'unread',
+        ]);
 
         return back()->with('success', 'Thanks for your message — we will get back to you shortly.');
     }

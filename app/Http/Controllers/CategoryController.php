@@ -8,9 +8,15 @@ use Str;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::all();
+        $categories = Category::when($request->search, function ($query) use ($request) {
+            $query->where('name', 'LIKE', "%{$request->search}%")
+                ->orWhere('tamil_name', 'LIKE', "%{$request->search}%");
+        })
+        ->orderBy('id', 'desc')
+        ->paginate(10);
+
         return view('admin.category.index', compact('categories'));
     }
 
@@ -22,7 +28,7 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:categories,name',
             'tamil_name' => 'nullable|string|max:255',
             'slug' => 'nullable|string|max:255'
         ]);
@@ -53,7 +59,7 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'tamil_name' => 'nullable|string|max:255',
             'slug' => 'nullable|string|max:255'
         ]);

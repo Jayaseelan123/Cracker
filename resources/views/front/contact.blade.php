@@ -1,4 +1,4 @@
-@extends('layouts.front')
+@extends('layouts.app')
 
 @section('title', 'Contact Us - Crackers Time')
 @section('hero_title', 'Contact Us')
@@ -275,14 +275,15 @@
         <!-- LEFT — Info Panel -->
         <div class="col-lg-5">
             <div class="contact-info-panel h-100">
-                <h3>Get In Touch 👋</h3>
+                <h3>Get In Touch 👋</h3>C:\Users\jayas\Downloads\IMG-20260525-WA0008.jpg (3).jpeg
                 <p class="sub">Our team is ready to assist you with orders, bulk enquiries, or any questions.</p>
 
                 <div class="ci-item">
                     <div class="ci-icon"><i class="fas fa-phone"></i></div>
                     <div>
                         <div class="ci-label">Phone / WhatsApp</div>
-                        <a href="tel:+919488864547" class="ci-value">+91 94888 64547</a>
+                        <a href="tel:+919488864547" class="ci-value">+91 807288549<br>
+                        +91 9787515558</a>
                     </div>
                 </div>
 
@@ -290,7 +291,7 @@
                     <div class="ci-icon"><i class="fas fa-envelope"></i></div>
                     <div>
                         <div class="ci-label">Email Address</div>
-                        <a href="mailto:crackerstime.com@gmail.com" class="ci-value">crackerstime.com@gmail.com</a>
+                        <a href="mailto:crackerstime.com@gmail.com" class="ci-value">kasthuricrackers29@gmail.com</a>
                     </div>
                 </div>
 
@@ -298,7 +299,7 @@
                     <div class="ci-icon"><i class="fas fa-map-marker-alt"></i></div>
                     <div>
                         <div class="ci-label">Office Address</div>
-                        <span class="ci-value">Door No 2/554/C3, Southside School Near,<br>Sivakasi to Sattur Main Road,<br>Mettamalai, Sivakasi – 626 203</span>
+                        <span class="ci-value">D No 3/1362,CA,Bharathi nagar Sattur road,<br>Sivakasi – 626 189</span>
                     </div>
                 </div>
 

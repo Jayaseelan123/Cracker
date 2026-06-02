@@ -6,14 +6,6 @@
     <a href="{{ route('category.index') }}" class="btn btn-outline-secondary">Back to list</a>
 </div>
 
-@extends('layouts.admin')
-
-@section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Create Category</h2>
-    <a href="{{ route('category.index') }}" class="btn btn-outline-secondary">Back to list</a>
-</div>
-
 <div class="card p-3">
     @if($errors->any())
       <div class="alert alert-danger">
@@ -27,8 +19,9 @@
 
     <form action="{{ route('category.store') }}" method="POST">
       @csrf
+      <p class="text-muted small mb-3">Note: <span class="text-danger fw-bold">*</span> Required fields</p>
       <div class="mb-3">
-        <label class="form-label">Name</label>
+        <label class="form-label">Name <span class="text-danger">*</span></label>
         <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
       </div>
       <div class="mb-3">
@@ -36,7 +29,7 @@
         <input type="text" name="tamil_name" class="form-control" value="{{ old('tamil_name') }}">
       </div>
       <div class="mb-3">
-        <label class="form-label">Slug</label>
+        <label class="form-label">Slug <span class="text-danger">*</span></label>
         <input type="text" name="slug" class="form-control" value="{{ old('slug') }}" required>
       </div>
       <button class="btn btn-success" type="submit">Create</button>

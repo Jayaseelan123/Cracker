@@ -1,4 +1,4 @@
-@extends('layouts.front')
+@extends('layouts.app')
 
 @section('content')
 <style>
@@ -259,7 +259,7 @@
             <ul class="info-list">
                 <li>Your order will be delivered within 2-3 working days</li>
                 <li>Once payment done the order delivered to you</li>
-                <li>You will receive order updates via SMS and email</li>
+                <li>You will receive order updates via WhatsApp</li>
                 <li>Contact us if you have any questions about your order</li>
             </ul>
         </div>

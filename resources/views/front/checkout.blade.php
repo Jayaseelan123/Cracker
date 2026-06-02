@@ -1,4 +1,4 @@
-@extends('layouts.front')
+@extends('layouts.app')
 
 @section('title', 'Finalize Your Enquiry')
 @section('hero_title', 'Complete Your Enquiry')
@@ -79,19 +79,12 @@
         @if(count($items) > 0)
         <div class="card border-0 shadow-sm rounded-4 mt-4 bg-light bg-opacity-50">
             <div class="card-body p-4">
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted">Items Subtotal</span>
-                    <span class="fw-bold">₹{{ number_format($subtotal, 2) }}</span>
-                </div>
-                <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
-                    <span class="text-muted">Packing & Handling</span>
-                    <span class="fw-bold">₹{{ number_format($packing, 2) }}</span>
-                </div>
+
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold">Est. Total Amount</h5>
                     <h4 class="mb-0 fw-bold text-primary">₹{{ number_format($total, 2) }}</h4>
                 </div>
-                <div class="mt-2 small text-muted text-end">* Final pricing may vary based on delivery location</div>
+
             </div>
         </div>
         @endif
@@ -145,21 +138,53 @@
                         </div>
 
                         <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <label class="form-label fw-bold small text-uppercase tracking-wider">Place / Landmark</label>
+                                <input type="text" name="place" value="{{ old('place') }}"
+                                       class="form-control" placeholder="e.g. Near Bus Stand">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
                             <div class="col-6">
-                                <label class="form-label fw-bold small text-uppercase tracking-wider">City/Town *</label>
+                                <label class="form-label fw-bold small text-uppercase tracking-wider">District / City *</label>
                                 <input type="text" name="city" value="{{ old('city') }}"
-                                       class="form-control @error('city') is-invalid @enderror" required>
+                                       class="form-control @error('city') is-invalid @enderror" placeholder="e.g. Madurai" required>
+                                @error('city') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-6">
                                 <label class="form-label fw-bold small text-uppercase tracking-wider">State *</label>
-                                <input type="text" name="state" value="{{ old('state') ?? 'Tamil Nadu' }}"
-                                       class="form-control @error('state') is-invalid @enderror" required>
+                                @if($deliveryZones->count() > 0)
+                                    <select name="state" id="stateSelect"
+                                            class="form-control @error('state') is-invalid @enderror" required
+                                            onchange="updatePackingInfo(this)">
+                                        <option value="">-- Select State --</option>
+                                        @foreach($deliveryZones as $zone)
+                                            <option value="{{ $zone->state_name }}"
+                                                    data-packing="{{ $zone->packing_charges }}"
+                                                    data-min="{{ $zone->min_order_amount }}"
+                                                    {{ old('state') == $zone->state_name ? 'selected' : '' }}>
+                                                {{ $zone->state_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    <input type="text" name="state" value="{{ old('state', 'Tamil Nadu') }}"
+                                           class="form-control @error('state') is-invalid @enderror" required>
+                                @endif
+                                @error('state') <div class="small text-danger mt-1">{{ $message }}</div> @enderror
                             </div>
+                        </div>
+
+                        {{-- Delivery Zone Info (shown dynamically) --}}
+                        <div id="zoneInfoBox" class="alert alert-info py-2 px-3 small mb-4" style="display:none;">
+                            <i class="fas fa-truck me-1"></i>
+                            <span id="zoneInfoText"></span>
                         </div>
 
                         <div class="mb-5">
                             <label class="form-label fw-bold small text-uppercase tracking-wider">Email (Optional)</label>
-                            <input type="email" name="email" value="{{ old('email') }}" 
+                            <input type="email" name="email" value="{{ old('email') }}"
                                    class="form-control" placeholder="your@email.com">
                         </div>
 
@@ -175,15 +200,7 @@
                 </div>
             </div>
             
-            <div class="mt-4 p-3 bg-white rounded-4 shadow-sm border-start border-4 border-warning">
-                <div class="d-flex align-items-center">
-                    <div class="text-warning me-3"><i class="fas fa-info-circle fa-2x"></i></div>
-                    <div>
-                        <div class="fw-bold">How it works?</div>
-                        <div class="small text-muted">Submit this enquiry and our team will call you within 24 hours to confirm stock and final shipping price.</div>
-                    </div>
-                </div>
-            </div>
+
         </div>
     </div>
 </div>
@@ -223,6 +240,53 @@
         min-width: 100px;
     }
 </style>
+
+<script>
+// Subtotal from PHP (used for min-order check in JS)
+const cartSubtotal = {{ $subtotal }};
+
+function updatePackingInfo(sel) {
+    const opt = sel.options[sel.selectedIndex];
+    const box  = document.getElementById('zoneInfoBox');
+    const txt  = document.getElementById('zoneInfoText');
+
+    if (!opt || opt.value === '') {
+        box.style.display = 'none';
+        return;
+    }
+
+    const packing  = parseFloat(opt.dataset.packing  || 0);
+    const minOrder = parseFloat(opt.dataset.min       || 0);
+    let   info     = opt.value + ' — ';
+
+    if (minOrder > 0) {
+        info += 'Min. Order: ₹' + minOrder.toLocaleString('en-IN');
+        if (cartSubtotal < minOrder) {
+            info += ' ⚠️ Your cart (₹' + cartSubtotal.toLocaleString('en-IN') + ') is below minimum.';
+            box.className = 'alert alert-warning py-2 px-3 small mb-4';
+        } else {
+            box.className = 'alert alert-success py-2 px-3 small mb-4';
+        }
+    } else {
+        box.className = 'alert alert-info py-2 px-3 small mb-4';
+    }
+
+    if (packing > 0) {
+        info += '  |  Packing: ₹' + packing.toLocaleString('en-IN');
+    } else {
+        info += '  |  Free Packing';
+    }
+
+    txt.textContent = info;
+    box.style.display = 'block';
+}
+
+// Auto-trigger on page load if state was pre-selected (e.g. validation failure)
+document.addEventListener('DOMContentLoaded', function() {
+    const sel = document.getElementById('stateSelect');
+    if (sel && sel.value) updatePackingInfo(sel);
+});
+</script>
 
 @endsection
 

@@ -18,16 +18,18 @@
                 <div class="card-body p-4">
                     <form action="{{ route('banners.store') }}" method="POST">
                         @csrf
-                        
+
+                        <p class="text-muted small mb-4">Note: <span class="text-danger fw-bold">*</span> Required fields</p>
+
                         <div class="mb-4">
-                            <label class="form-label fw-semibold small text-muted text-uppercase">Banner Title (Optional)</label>
-                            <input type="text" name="title" class="form-control form-control-lg border-light-subtle bg-light bg-opacity-50" placeholder="E.g., Mega Diwali Sale" value="{{ old('title') }}">
+                            <label class="form-label fw-semibold small text-muted text-uppercase">Banner Title <span class="text-danger">*</span></label>
+                            <input type="text" name="title" class="form-control form-control-lg border-light-subtle bg-light bg-opacity-50" placeholder="E.g., Mega Diwali Sale" value="{{ old('title') }}" required>
                             @error('title')<small class="text-danger">{{ $message }}</small>@enderror
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-semibold small text-muted text-uppercase">Banner Subtitle (Optional)</label>
-                            <input type="text" name="subtitle" class="form-control form-control-lg border-light-subtle bg-light bg-opacity-50" placeholder="E.g., Up to 50% off on all crackers" value="{{ old('subtitle') }}">
+                            <label class="form-label fw-semibold small text-muted text-uppercase">Banner Subtitle <span class="text-danger">*</span></label>
+                            <input type="text" name="subtitle" class="form-control form-control-lg border-light-subtle bg-light bg-opacity-50" placeholder="E.g., Up to 50% off on all crackers" value="{{ old('subtitle') }}" required>
                             @error('subtitle')<small class="text-danger">{{ $message }}</small>@enderror
                         </div>
 
@@ -39,7 +41,6 @@
                                     <option value="{{ $img }}" {{ old('image') == $img ? 'selected' : '' }}>{{ basename($img) }}</option>
                                 @endforeach
                             </select>
-                            <div class="form-text mt-2"><i class="fas fa-info-circle me-1"></i>These images are pre-loaded in your public/images folder.</div>
                             @error('image')<small class="text-danger">{{ $message }}</small>@enderror
                             
                             <!-- Image Preview Area -->
@@ -52,10 +53,11 @@
                         </div>
 
                         <div class="mb-4">
-                            <div class="form-check form-switch form-check-lg d-flex align-items-center">
-                                <input class="form-check-input" type="checkbox" name="is_active" id="isActive" value="1" checked style="transform: scale(1.5); margin-right: 15px;">
-                                <label class="form-check-label fw-bold text-dark pt-1" for="isActive">Set as Active Banner</label>
-                            </div>
+                            <label class="form-label fw-semibold small text-muted text-uppercase">Banner Status</label>
+                            <select name="is_active" class="form-select form-select-lg border-light-subtle bg-light bg-opacity-50">
+                                <option value="1" {{ old('is_active', '1') == '1' ? 'selected' : '' }}>Active - Visible in website</option>
+                                <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Inactive - Not visible in website</option>
+                            </select>
                         </div>
 
                         <hr class="my-4 text-muted opacity-25">

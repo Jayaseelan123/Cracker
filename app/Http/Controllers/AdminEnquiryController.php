@@ -33,6 +33,7 @@ class AdminEnquiryController extends Controller
     {
         $request->validate([
             'customer_name' => 'required|string',
+            'customer_phone' => 'required|string',
             'address' => 'required|string',
             'order_date' => 'required|date',
             'items' => 'required|array|min:1',
@@ -48,27 +49,25 @@ class AdminEnquiryController extends Controller
                     'order_number' => $orderNumber,
                     'customer_name' => $request->customer_name,
                     'customer_address' => $request->address,
-                    'customer_phone' => $request->customer_id ?? 'N/A', // Using customer_id field as phone from the select
+                    'customer_phone' => $request->customer_phone,
                     'total_amount' => $request->final_amount,
                     'status' => 'completed', 
                     'created_at' => $request->order_date . ' ' . date('H:i:s'),
                 ]);
 
                 foreach ($request->items as $item) {
-                    // Assuming OrderItem model exists
-                    DB::table('order_items')->insert([
+                    \App\Models\OrderItem::create([
                         'order_id' => $order->id,
                         'product_id' => $item['product_id'],
                         'quantity' => $item['quantity'],
                         'price' => $item['price'],
                         'total' => $item['quantity'] * $item['price'],
-                        'created_at' => now(),
-                        'updated_at' => now(),
                     ]);
 
                     // Decrement stock if column exists
-                    if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'stock')) {
-                        DB::table('products')->where('id', $item['product_id'])->decrement('stock', $item['quantity']);
+                    $product = \App\Models\Product::find($item['product_id']);
+                    if ($product && \Illuminate\Support\Facades\Schema::hasColumn('products', 'stock')) {
+                        $product->decrement('stock', $item['quantity']);
                     }
                 }
             });
@@ -84,9 +83,19 @@ class AdminEnquiryController extends Controller
      */
     public function enquiryCustomer(Request $request)
     {
+        $type = $request->get('type', 'direct');
         $query = Order::query();
 
-        if ($request->has('search')) {
+        if ($type === 'direct') {
+            $query->where('order_number', 'LIKE', 'DIR-%');
+        } else {
+            $query->where(function($q) {
+                $q->where('order_number', 'NOT LIKE', 'DIR-%')
+                  ->orWhereNull('order_number');
+            });
+        }
+
+        if ($request->has('search') && $request->search != '') {
             $search = $request->get('search');
             $query->where(function($q) use ($search) {
                 $q->where('customer_name', 'LIKE', "%{$search}%")
@@ -96,13 +105,23 @@ class AdminEnquiryController extends Controller
         }
 
         $orders = $query->latest()->paginate(15);
-        return view('admin.enquiry.customer', compact('orders'));
+        return view('admin.enquiry.customer', compact('orders', 'type'));
     }
     public function exportCustomer(Request $request)
     {
+        $type = $request->get('type', 'direct');
         $query = Order::query();
 
-        if ($request->has('search')) {
+        if ($type === 'direct') {
+            $query->where('order_number', 'LIKE', 'DIR-%');
+        } else {
+            $query->where(function($q) {
+                $q->where('order_number', 'NOT LIKE', 'DIR-%')
+                  ->orWhereNull('order_number');
+            });
+        }
+
+        if ($request->has('search') && $request->search != '') {
             $search = $request->get('search');
             $query->where(function($q) use ($search) {
                 $q->where('customer_name', 'LIKE', "%{$search}%")

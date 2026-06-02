@@ -11,7 +11,7 @@ class Product extends Model
 
     protected $fillable = [
         'sku','name','name_en','name_ta','rate','price','mrp','discount_rate','final_price',
-        'min_order_value','max_order_value','stock','status','image','image_path','category_id'
+        'min_order_value','max_order_value','stock','status','image','image_path','video','video_url','video_status','category_id'
     ];
 
     /**
