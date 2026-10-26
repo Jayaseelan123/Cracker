@@ -4,6 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin Login</title>
+    @php
+        $company = \App\Models\CompanyDetail::first();
+    @endphp
+    @if($company && $company->favicon)
+        <link rel="icon" type="image/png" href="{{ asset($company->favicon) }}">
+    @endif
     <style>
         /* Page-only styles for admin login (matches attached design) */
         :root{
@@ -129,8 +135,8 @@
         @csrf
 
         <div class="field">
-            <label for="email">Phone Number</label>
-            <input id="email" type="text" name="email" placeholder="Enter phone number" required autofocus>
+            <label for="email">Email</label>
+            <input id="email" type="text" name="email" placeholder="Enter email address" required autofocus>
         </div>
 
         <div class="field">

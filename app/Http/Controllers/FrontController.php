@@ -27,6 +27,15 @@ class FrontController extends Controller
         return view('front.index', compact('categories', 'banners'));
     }
 
+    public function products()
+    {
+        // Get all categories with their active products
+        $categories = Category::with(['products' => function($query) {
+            $query->where('status', 'Active');
+        }])->get();
+        return view('front.products', compact('categories'));
+    }
+
     public function downloadProducts()
     {
         // Strictly Auto-generate PDF based on the active website products
@@ -39,7 +48,7 @@ class FrontController extends Controller
         $company = \App\Models\CompanyDetail::first();
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('front.products-pdf', compact('categories', 'company'));
-        return $pdf->download('CrackerTime_Products_List.pdf');
+        return $pdf->download('Kasthuripyro_Products_List.pdf');
     }
 
     public function about()
@@ -62,6 +71,11 @@ class FrontController extends Controller
     {
         $sections = \App\Models\TermsSection::ofType('privacy')->get();
         return view('front.privacy', compact('sections'));
+    }
+    
+    public function safetyGuide()
+    {
+        return view('front.safety-guide');
     }
 
     public function checkout()
@@ -138,91 +152,8 @@ class FrontController extends Controller
         return view('front.blog', compact('posts'));
     }
 
-    public function placeOrder(\Illuminate\Http\Request $request)
-    {
-        $data = $request->validate([
-            'name' => 'required|string|max:191',
-            'phone' => 'required|string|max:20',
-            'email' => 'nullable|email|max:191',
-            'address' => 'required|string',
-            'city' => 'required|string|max:120',
-            'state' => 'required|string|max:120',
-            'pin' => 'nullable|string|max:20',
-        ]);
-
-        // Compute totals from session cart
-        $cart = session('cart', []);
-        $subtotal = 0;
-        foreach ($cart as $productId => $qty) {
-            $product = \App\Models\Product::find($productId);
-            if (! $product) continue;
-            $price = $product->price ?? 0;
-            $subtotal += $price * $qty;
-        }
-
-        $packing = 0;
-        $total = $subtotal + $packing;
-
-        // Persist order and order items in the database
-        try {
-            $order = DB::transaction(function () use ($data, $cart, $subtotal, $packing, $total) {
-                $orderNumber = 'ORD' . time();
-
-                // Build order payload only for columns that exist in the orders table
-                $orderPayload = [];
-                if (\Illuminate\Support\Facades\Schema::hasColumn('orders', 'order_number')) {
-                    $orderPayload['order_number'] = $orderNumber;
-                }
-                if (\Illuminate\Support\Facades\Schema::hasColumn('orders', 'customer_name')) {
-                    $orderPayload['customer_name'] = $data['name'];
-                }
-                if (\Illuminate\Support\Facades\Schema::hasColumn('orders', 'customer_phone')) {
-                    $orderPayload['customer_phone'] = $data['phone'];
-                }
-                if (\Illuminate\Support\Facades\Schema::hasColumn('orders', 'customer_address')) {
-                    $orderPayload['customer_address'] = $data['address'] . ', ' . $data['city'] . ', ' . $data['state'] . ' - ' . ($data['pin'] ?? '');
-                }
-                if (\Illuminate\Support\Facades\Schema::hasColumn('orders', 'total_amount')) {
-                    $orderPayload['total_amount'] = $total;
-                }
-                if (\Illuminate\Support\Facades\Schema::hasColumn('orders', 'status')) {
-                    $orderPayload['status'] = 'pending';
-                }
-
-                $order = Order::create($orderPayload);
-
-                foreach ($cart as $productId => $qty) {
-                    $product = \App\Models\Product::find($productId);
-                    if (! $product) continue;
-                    $price = $product->price ?? 0;
-                    $itemTotal = $price * $qty;
-
-                    OrderItem::create([
-                        'order_id' => $order->id,
-                        'product_id' => $product->id,
-                        'quantity' => $qty,
-                        'price' => $price,
-                        'total' => $itemTotal,
-                    ]);
-
-                    // Decrement stock if column exists
-                    if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'stock')) {
-                        try { $product->decrement('stock', $qty); } catch (\Throwable $e) { /* ignore */ }
-                    }
-                }
-
-                return $order;
-            });
-        } catch (\Throwable $ex) {
-            logger()->error('Order persist failed', ['error' => $ex->getMessage(), 'data' => $data, 'cart' => $cart]);
-            return redirect()->route('home')->with('error', 'There was a problem placing your order. Please try again.');
-        }
-
-        // Clear cart after placing
-        session(['cart' => []]);
-
-        return redirect()->route('home')->with('success', 'Order placed successfully. Order no: ' . ($order->order_number ?? ''));
-    }
+    // Order placement is now handled by CheckoutController@placeOrder
+    // This method has been removed to prevent any risk of double order-item insertion.
 
     public function contactSubmit(\Illuminate\Http\Request $request)
     {

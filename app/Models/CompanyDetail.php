@@ -10,6 +10,7 @@ class CompanyDetail extends Model
         'company_name',
         'address',
         'logo',
+        'favicon',
         'contact_number',
         'whatsapp_number',
         'bank_ac_no',

@@ -61,36 +61,15 @@
                         @error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
-                            <select class="form-select @error('category') is-invalid @enderror" id="category" name="category" required>
-                                <option value="">Select Category</option>
-                                <option value="General" {{ old('category', $blog->category) === 'General' ? 'selected' : '' }}>General</option>
-                                <option value="Science" {{ old('category', $blog->category) === 'Science' ? 'selected' : '' }}>Science</option>
-                                <option value="Eco"     {{ old('category', $blog->category) === 'Eco'     ? 'selected' : '' }}>Eco / Green</option>
-                                <option value="Safety"  {{ old('category', $blog->category) === 'Safety'  ? 'selected' : '' }}>Safety</option>
-                                <option value="History" {{ old('category', $blog->category) === 'History' ? 'selected' : '' }}>History</option>
-                                <option value="Kids"    {{ old('category', $blog->category) === 'Kids'    ? 'selected' : '' }}>Kids</option>
-                                <option value="Budget"  {{ old('category', $blog->category) === 'Budget'  ? 'selected' : '' }}>Budget Tips</option>
-                            </select>
-                            @error('category')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="published_at" class="form-label">Publish Date</label>
-                            <input type="datetime-local" class="form-control @error('published_at') is-invalid @enderror"
-                                   id="published_at" name="published_at"
-                                   value="{{ old('published_at', $blog->published_at ? $blog->published_at->format('Y-m-d\TH:i') : '') }}">
-                            @error('published_at')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
+                   
+                    <div class="mb-3">
+                        <label for="published_at" class="form-label">Publish Date</label>
+                        <input type="datetime-local" class="form-control @error('published_at') is-invalid @enderror"
+                               id="published_at" name="published_at"
+                               value="{{ old('published_at', $blog->published_at ? $blog->published_at->format('Y-m-d\TH:i') : '') }}">
+                        @error('published_at')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
 
-                    <div class="mb-3">
-                        <label for="excerpt" class="form-label">Excerpt <small class="text-muted fw-normal">(Short summary shown in listing)</small></label>
-                        <textarea class="form-control @error('excerpt') is-invalid @enderror"
-                                  id="excerpt" name="excerpt" rows="2" maxlength="500">{{ old('excerpt', $blog->excerpt) }}</textarea>
-                        @error('excerpt')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
                 </div>
 
                 {{-- Content Editor --}}
@@ -158,55 +137,7 @@
             </div>
 
             {{-- RIGHT: Stats --}}
-            <div class="col-lg-4">
-                <div class="sidebar-stats">
-                    <h5><i class="fas fa-chart-bar me-2"></i>Post Stats</h5>
-
-                    <div class="stat-row">
-                        <span class="stat-label">Status</span>
-                        <span class="stat-value">
-                            @if($blog->is_published)
-                                <span class="badge bg-success">Published</span>
-                            @else
-                                <span class="badge bg-warning text-dark">Draft</span>
-                            @endif
-                        </span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Views</span>
-                        <span class="stat-value"><i class="fas fa-eye text-primary me-1"></i>{{ number_format($blog->views) }}</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Reading Time</span>
-                        <span class="stat-value">{{ $blog->getReadingTime() }}</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Category</span>
-                        <span class="stat-value">{{ $blog->category }}</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Created</span>
-                        <span class="stat-value">{{ $blog->created_at->format('M d, Y') }}</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Last Updated</span>
-                        <span class="stat-value">{{ $blog->updated_at->format('M d, Y H:i') }}</span>
-                    </div>
-                    @if($blog->published_at)
-                    <div class="stat-row">
-                        <span class="stat-label">Published On</span>
-                        <span class="stat-value">{{ $blog->published_at->format('M d, Y') }}</span>
-                    </div>
-                    @endif
-
-                    <div class="mt-4">
-                        <a href="{{ route('blog.show', $blog->slug) }}" target="_blank"
-                           class="btn btn-outline-secondary btn-sm w-100">
-                            <i class="fas fa-external-link-alt me-2"></i>View on Website
-                        </a>
-                    </div>
-                </div>
-            </div>
+            
         </div>
     </form>
 </div>

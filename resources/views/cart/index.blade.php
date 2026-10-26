@@ -42,9 +42,7 @@
                                 </div>
                                 <div class="cart-item-details">
                                     <h6 class="mb-1">{{ $product->name_en ?? $product->name ?? '—' }}</h6>
-                                    @if(!empty($product->name_ta))
-                                        <div class="text-muted small">{{ $product->name_ta }}</div>
-                                    @endif
+
                                     <div class="text-muted small">{{ $product->pack_size ?? '' }}</div>
                                     <div class="mt-2 fw-bold">Price: ₹{{ number_format($price, 2) }}</div>
                                 </div>

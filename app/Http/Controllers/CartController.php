@@ -12,7 +12,7 @@ class CartController extends Controller
 
         // Build items array for views that expect detailed product info
         $items = [];
-        $subtotal = 0;
+        $productTotal = 0;
         foreach ($cart as $productId => $qty) {
             $product = \App\Models\Product::find($productId);
             if (!$product)
@@ -24,13 +24,13 @@ class CartController extends Controller
                 'qty' => $qty,
                 'total' => $total,
             ];
-            $subtotal += $total;
+            $productTotal += $total;
         }
 
         $packing = 0;
-        $total = $subtotal + $packing;
+        $total = $productTotal + $packing;
 
-        return view('cart.index', compact('cart', 'items', 'subtotal', 'packing', 'total'));
+        return view('cart.index', compact('cart', 'items', 'productTotal', 'packing', 'total'));
     }
 
     public function add(Request $request, $id)

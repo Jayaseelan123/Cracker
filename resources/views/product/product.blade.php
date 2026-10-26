@@ -34,11 +34,9 @@ document.querySelectorAll('.qty-minus').forEach(btn => {
   </td>
     <td>
         <div>{{ $product->name_en ?? $product->name ?? '—' }}</div>
-        @if(!empty($product->name_ta))
-            <div class="small text-muted">{{ $product->name_ta }}</div>
-        @endif
+
     </td>
-  <td><strong>₹{{ $product->price }}</strong></td>
+  <td><strong>&#8377;{{ $product->price }}</strong></td>
 
   <td>
     <div style="display:flex; align-items:center; gap:8px;">

@@ -5,7 +5,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'CrackerTime Clone')</title>
+    <title>@yield('title', 'Kasthuripyro')</title>
+    <meta name="description" content="@yield('meta_description', 'Shop Diwali crackers online at Kasthuripyro. Sparklers, fountains, rockets, bombs and family packs.')">
+    <link rel="canonical" href="@yield('canonical', url()->current())">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Kasthuripyro">
+    <meta property="og:locale" content="en_IN">
+    <meta property="og:title" content="@yield('og_title', View::yieldContent('title'))">
+    <meta property="og:description" content="@yield('meta_description', 'Shop Diwali crackers online at Kasthuripyro.')">
+    <meta property="og:url" content="@yield('canonical', url()->current())">
+    @php $__companyFavicon = \App\Models\CompanyDetail::first(); @endphp
+    @if($__companyFavicon && $__companyFavicon->favicon)
+        <link rel="icon" href="{{ asset($__companyFavicon->favicon) }}">
+    @endif
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -22,7 +35,8 @@
 
         /* ---------------- HEADER ---------------- */
         .top-header {
-            background: rgba(13, 107, 138, 0.95); /* Deep teal glass */
+            background: rgba(13, 107, 138, 0.95);
+            /* Deep teal glass */
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -64,12 +78,21 @@
             border-radius: 2px;
         }
 
-        .top-header a:not(.cart-btn):not(.btn):hover {
+        .top-header a:not(.cart-btn):not(.btn):hover,
+        .top-header a:not(.cart-btn):not(.btn).active {
             color: #ff9900;
         }
 
-        .top-header a:not(.cart-btn):not(.btn):hover::after {
+        .top-header a:not(.cart-btn):not(.btn):hover::after,
+        .top-header a:not(.cart-btn):not(.btn).active::after {
             width: 100%;
+        }
+        
+        .mobile-menu-nav a.active {
+            color: #ff9900 !important;
+            font-weight: 700;
+            background: rgba(255,153,0,0.1);
+            border-left: 4px solid #ff9900;
         }
 
         .logo-text {
@@ -93,7 +116,8 @@
 
         /* ---------------- PREMIUM NAVBAR DROPDOWN ---------------- */
         .dropdown-toggle::after {
-            display: none; /* Hide default arrow */
+            display: none;
+            /* Hide default arrow */
         }
 
         .dropdown-menu {
@@ -104,11 +128,12 @@
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(0,0,0,0.05) !important;
+            border: 1px solid rgba(0, 0, 0, 0.05) !important;
             width: fit-content !important;
             min-width: 150px !important;
             max-width: 280px !important;
-            max-height: 300px; /* Scroll only */
+            max-height: 300px;
+            /* Scroll only */
             overflow-y: auto;
             scrollbar-width: thin;
         }
@@ -116,6 +141,7 @@
         .dropdown-menu::-webkit-scrollbar {
             width: 4px;
         }
+
         .dropdown-menu::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 10px;
@@ -131,8 +157,10 @@
             position: relative;
             z-index: 1;
             transition: all 0.3s ease;
-            font-size: 0.85rem !important; /* Reduced font size */
-            padding: 8px 12px !important; /* Reduced padding */
+            font-size: 0.85rem !important;
+            /* Reduced font size */
+            padding: 8px 12px !important;
+            /* Reduced padding */
         }
 
         .dropdown-item::before {
@@ -213,7 +241,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.2) 100%);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.2) 100%);
             z-index: 1;
         }
 
@@ -228,20 +256,27 @@
             font-size: 3.5rem;
             font-weight: 900;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 15px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5);
             animation: slideUp 0.8s ease forwards;
         }
 
         .hero-slide-content p {
             font-size: 1.5rem;
             opacity: 0.95;
-            text-shadow: 1px 1px 8px rgba(0,0,0,0.4);
+            text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.4);
             animation: slideUp 0.8s 0.2s ease forwards;
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Slider Navigation Dots */
@@ -259,8 +294,8 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.5);
-            border: 2px solid rgba(255,255,255,0.8);
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.8);
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -277,7 +312,7 @@
             top: 50%;
             transform: translateY(-50%);
             z-index: 10;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(5px);
             border: none;
             color: #fff;
@@ -293,16 +328,21 @@
         }
 
         .hero-slider-arrow:hover {
-            background: rgba(255,153,0,0.8);
+            background: rgba(255, 153, 0, 0.8);
             transform: translateY(-50%) scale(1.1);
         }
 
-        .hero-slider-arrow.prev { left: 20px; }
-        .hero-slider-arrow.next { right: 20px; }
+        .hero-slider-arrow.prev {
+            left: 20px;
+        }
+
+        .hero-slider-arrow.next {
+            right: 20px;
+        }
 
         /* Fallback static hero when no banners */
         .hero-banner {
-            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url("{{ asset('images/hero2.jpg') }}");
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url("{{ asset('images/sample.png') }}");
             background-size: cover;
             background-position: center;
             height: 300px;
@@ -318,7 +358,7 @@
         .hero-banner h1 {
             font-size: 3rem;
             font-weight: 900;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
             margin-bottom: 5px;
         }
 
@@ -332,7 +372,7 @@
             padding: 40px 0;
             background: #fff;
             border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
             margin-bottom: 50px;
         }
 
@@ -349,17 +389,20 @@
         .title-underline {
             width: 80px;
             height: 4px;
-            background: #ffcc00; /* Yellow underline like the image */
+            background: #ffcc00;
+            /* Yellow underline like the image */
             margin: 0 auto;
             border-radius: 2px;
         }
 
         .category-grid {
             display: flex;
-            flex-wrap: nowrap; /* Change to nowrap for carousel */
+            flex-wrap: nowrap;
+            /* Change to nowrap for carousel */
             justify-content: flex-start;
             gap: 30px;
-            padding: 20px 60px; /* Padding for arrows */
+            padding: 20px 60px;
+            /* Padding for arrows */
         }
 
         .category-carousel-container {
@@ -370,17 +413,21 @@
         .carousel-scroll {
             overflow-x: auto;
             scroll-behavior: smooth;
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+            -ms-overflow-style: none;
+            /* IE and Edge */
             scroll-snap-type: x mandatory;
         }
 
         .carousel-scroll::-webkit-scrollbar {
-            display: none; /* Chrome/Safari */
+            display: none;
+            /* Chrome/Safari */
         }
 
         .category-card {
-            flex: 0 0 auto; /* Prevent shrinking */
+            flex: 0 0 auto;
+            /* Prevent shrinking */
             scroll-snap-align: center;
             text-decoration: none !important;
             color: #333;
@@ -398,7 +445,7 @@
             background: #fff;
             border: none;
             border-radius: 50%;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
             z-index: 10;
             cursor: pointer;
             display: flex;
@@ -415,8 +462,13 @@
             transform: translateY(-50%) scale(1.1);
         }
 
-        .carousel-nav-btn.prev { left: 5px; }
-        .carousel-nav-btn.next { right: 5px; }
+        .carousel-nav-btn.prev {
+            left: 5px;
+        }
+
+        .carousel-nav-btn.next {
+            right: 5px;
+        }
 
         .category-card {
             text-decoration: none !important;
@@ -433,11 +485,12 @@
         .category-img-container {
             width: 140px;
             height: 140px;
-            border-radius: 50%; /* Circular like the image */
+            border-radius: 50%;
+            /* Circular like the image */
             overflow: hidden;
             margin: 0 auto 15px;
             border: 5px solid #fff;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             background: #f8f9fa;
             transition: border-color 0.3s ease;
         }
@@ -470,10 +523,12 @@
             .category-card {
                 width: 120px;
             }
+
             .category-img-container {
                 width: 100px;
                 height: 100px;
             }
+
             .section-title {
                 font-size: 1.8rem;
             }
@@ -523,12 +578,19 @@
         .category-header i {
             font-size: 1.4rem;
             color: #ff9900;
-            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.2));
         }
 
         @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(-50px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .product-table th {
@@ -860,24 +922,29 @@
                 justify-content: center;
                 align-items: center;
                 font-size: 24px;
-                color: #ffffff !important; /* White Burger */
+                color: #ffffff !important;
+                /* White Burger */
                 background: none;
                 border: none;
                 cursor: pointer;
-                margin-left: 15px; /* Space from cart */
+                margin-left: 15px;
+                /* Space from cart */
                 padding: 0;
             }
 
             /* Logo - Left Aligned */
             .fw-bold.logo-text {
                 position: static !important;
-                width: auto !important; /* Prevent 100% width */
+                width: auto !important;
+                /* Prevent 100% width */
                 margin-bottom: 0 !important;
                 text-align: left;
-                font-size: 22px; /* Slightly smaller to fit */
+                font-size: 22px;
+                /* Slightly smaller to fit */
                 font-weight: 800;
                 white-space: nowrap;
-                color: #ffffff !important; /* Force White on Teal */
+                color: #ffffff !important;
+                /* Force White on Teal */
                 transform: none !important;
             }
 
@@ -931,8 +998,8 @@
             }
 
             .mobile-menu-container.open {
-                max-height: 300px;
-                /* Adjust as needed */
+                max-height: calc(100vh - 60px);
+                overflow-y: auto;
             }
 
             .mobile-menu-nav {
@@ -943,7 +1010,8 @@
             }
 
             .mobile-menu-nav a {
-                color: #333333 !important; /* Force Dark text on white bg */
+                color: #333333 !important;
+                /* Force Dark text on white bg */
                 text-decoration: none;
                 font-weight: 600;
                 font-size: 16px;
@@ -1101,10 +1169,22 @@
             }
         }
     </style>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-PC8T27KQ');</script>
+    <!-- End Google Tag Manager -->
 
 </head>
 
 <body>
+    
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PC8T27KQ"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
     @php $__companyHeader = \App\Models\CompanyDetail::first(); @endphp
 
@@ -1116,8 +1196,7 @@
             @if($__companyHeader && $__companyHeader->logo)
                 <a href="{{ url('/') }}" style="line-height:0;">
                     <img src="{{ asset($__companyHeader->logo) }}"
-                         alt="{{ $__companyHeader->company_name ?? 'CrackerTime' }}"
-                         class="header-logo-img">
+                        alt="{{ $__companyHeader->company_name ?? 'CrackerTime' }}" class="header-logo-img">
                 </a>
             @else
                 <div class="fw-bold logo-text">{{ $__companyHeader->company_name ?? 'CRACKERTIME' }}</div>
@@ -1125,33 +1204,36 @@
 
             <!-- Desktop Nav - Pushed to Right -->
             <div class="d-none d-lg-block ms-auto me-4">
-                <a href="{{ url('/') }}">Home</a>
+                <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
 
                 @php $headerCats = \App\Models\Category::all(); @endphp
                 <div class="dropdown d-inline-block">
-                    <a href="#" class="dropdown-toggle d-flex align-items-center gap-1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a href="#" class="dropdown-toggle d-flex align-items-center gap-1 {{ request()->routeIs('front.products') && request()->has('category') ? 'active' : '' }}" data-bs-toggle="dropdown"
+                        aria-expanded="false">
                         Categories
                         <i class="fas fa-chevron-down small dropdown-icon"></i>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-4 p-2 mt-3" style="min-width: 220px;">
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-4 p-2 mt-3"
+                        style="min-width: 220px;">
                         @foreach($headerCats as $hCat)
-                        <li>
-                            <a class="dropdown-item rounded-3 py-2 px-3 fw-semibold text-dark nav-category-link" 
-                               href="{{ url('/') }}#cat-{{ $hCat->slug ?? Str::slug($hCat->name) }}">
-                                {{ $hCat->name }}
-                            </a>
-                        </li>
+                            <li>
+                                <a class="dropdown-item rounded-3 py-2 px-3 fw-semibold text-dark"
+                                    href="{{ route('front.products', ['category' => $hCat->slug ?? Str::slug($hCat->name)]) }}">
+                                    {{ $hCat->name }}
+                                </a>
+                            </li>
                         @endforeach
                     </ul>
                 </div>
 
-                <a href="{{ url('/about') }}">About</a>
-                <a href="{{ url('/blog') }}">Blog</a>
-                <a href="{{ url('/contact') }}">Contact</a>
+                <a href="{{ route('front.products') }}" class="{{ request()->routeIs('front.products') ? 'active' : '' }}">Products</a>
+                <a href="{{ url('/about') }}" class="{{ request()->is('about') ? 'active' : '' }}">About Us</a>
+                <a href="{{ url('/contact') }}" class="{{ request()->is('contact') ? 'active' : '' }}">Contact Us</a>
                 @if(\App\Models\SiteSetting::bool('show_pricelist_download', true))
-                <a href="{{ route('download.products') }}" class="btn rounded-pill ms-2" style="background-color: #ff9900; color: #fff !important; padding: 6px 16px; font-weight: 600; font-size: 14px; text-decoration: none;">
-                    <i class="fas fa-download me-1"></i> Products List
-                </a>
+                    <a href="{{ route('download.products') }}" class="btn rounded-pill ms-2"
+                        style="background-color: #ff9900; color: #fff !important; padding: 6px 16px; font-weight: 600; font-size: 14px; text-decoration: none;">
+                        <i class="fas fa-download me-1"></i> Products List
+                    </a>
                 @endif
             </div>
 
@@ -1174,61 +1256,72 @@
     <!-- Mobile Menu Container (Moved outside top-header) -->
     <div class="mobile-menu-container d-lg-none" id="mobileMenuContainer">
         <div class="mobile-menu-nav">
-            <a href="{{ url('/') }}">Home</a>
-            
-            <div class="fw-bold px-2 py-2 text-primary small text-uppercase">Categories</div>
-            @foreach(\App\Models\Category::all() as $mCat)
-                <a href="{{ url('/') }}#cat-{{ $mCat->slug ?? Str::slug($mCat->name) }}" class="ps-4 nav-category-link">{{ $mCat->name }}</a>
-            @endforeach
+            <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
 
-            <a href="{{ url('/about') }}">About</a>
-            <a href="{{ url('/blog') }}">Blog</a>
-            <a href="{{ url('/contact') }}">Contact</a>
-            @if(\App\Models\SiteSetting::bool('show_pricelist_download', true))
-            <div class="p-3">
-                <a href="{{ route('download.products') }}" class="btn w-100 rounded-pill" style="background-color: #ff9900; color: #fff !important; padding: 10px; font-weight: 600; text-align: center; border-bottom: none;">
-                    <i class="fas fa-download me-1"></i> Products List
-                </a>
+            <a href="#mobileCategoriesCollapse" data-bs-toggle="collapse" role="button" aria-expanded="false"
+                aria-controls="mobileCategoriesCollapse" class="d-flex justify-content-between align-items-center {{ request()->routeIs('front.products') && request()->has('category') ? 'active' : '' }}">
+                <span>Categories</span>
+                <i class="fas fa-chevron-down small text-muted"></i>
+            </a>
+            <div class="collapse" id="mobileCategoriesCollapse">
+                <div class="ps-3 bg-light rounded-2 mx-2 mb-2 border" style="max-height: 250px; overflow-y: auto;">
+                    @foreach(\App\Models\Category::all() as $mCat)
+                        <a href="{{ route('front.products', ['category' => $mCat->slug ?? Str::slug($mCat->name)]) }}"
+                            class="border-0"
+                            style="font-size: 14.5px; padding: 8px 10px; display:block; color:#333; text-decoration:none;">{{ $mCat->name }}</a>
+                    @endforeach
+                </div>
             </div>
+
+            <a href="{{ route('front.products') }}" class="{{ request()->routeIs('front.products') ? 'active' : '' }}">Products</a>
+            <a href="{{ url('/about') }}" class="{{ request()->is('about') ? 'active' : '' }}">About</a>
+            <a href="{{ url('/contact') }}" class="{{ request()->is('contact') ? 'active' : '' }}">Contact</a>
+            @if(\App\Models\SiteSetting::bool('show_pricelist_download', true))
+                <div class="p-3">
+                    <a href="{{ route('download.products') }}" class="btn w-100 rounded-pill"
+                        style="background-color: #ff9900; color: #fff !important; padding: 10px; font-weight: 600; text-align: center; border-bottom: none;">
+                        <i class="fas fa-download me-1"></i> Products List
+                    </a>
+                </div>
             @endif
         </div>
     </div>
 
     <!-- HERO BANNER SLIDER -->
     @if(isset($banners) && $banners->count() > 0)
-    <div class="hero-slider" id="heroSlider">
-        @foreach($banners as $index => $banner)
-        <div class="hero-slide {{ $index === 0 ? 'active' : '' }}" data-slide="{{ $index }}">
-            <img src="{{ asset($banner->image) }}" alt="{{ $banner->title ?? 'Banner' }}">
-            <div class="hero-slide-overlay"></div>
-            <div class="hero-slide-content">
-                @if($banner->title)
-                    <h1>{{ $banner->title }}</h1>
-                @endif
-                @if($banner->subtitle)
-                    <p>{{ $banner->subtitle }}</p>
-                @endif
+        <div class="hero-slider" id="heroSlider">
+            @foreach($banners as $index => $banner)
+                <div class="hero-slide {{ $index === 0 ? 'active' : '' }}" data-slide="{{ $index }}">
+                    <img src="{{ asset($banner->image) }}" alt="{{ $banner->title ?? 'Banner' }}">
+                    <div class="hero-slide-overlay"></div>
+                    <div class="hero-slide-content">
+                        <!--@if($banner->title)-->
+                        <!--    <h1>{{ $banner->title }}</h1>-->
+                        <!--@endif-->
+                        <!--@if($banner->subtitle)-->
+                        <!--    <p>{{ $banner->subtitle }}</p>-->
+                        <!--@endif-->
+                    </div>
+                </div>
+            @endforeach
+
+            @if($banners->count() > 1)
+                <button class="hero-slider-arrow prev" id="sliderPrev"><i class="fas fa-chevron-left"></i></button>
+                <button class="hero-slider-arrow next" id="sliderNext"><i class="fas fa-chevron-right"></i></button>
+                <div class="hero-slider-dots" id="sliderDots">
+                    @foreach($banners as $index => $banner)
+                        <div class="hero-slider-dot {{ $index === 0 ? 'active' : '' }}" data-slide="{{ $index }}"></div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    @else
+        <div class="hero-banner">
+            <div>
+                <h1>@yield('hero_title', 'Happy Diwali')</h1>
+                <p>@yield('hero_subtitle', 'Festival of Lights')</p>
             </div>
         </div>
-        @endforeach
-
-        @if($banners->count() > 1)
-        <button class="hero-slider-arrow prev" id="sliderPrev"><i class="fas fa-chevron-left"></i></button>
-        <button class="hero-slider-arrow next" id="sliderNext"><i class="fas fa-chevron-right"></i></button>
-        <div class="hero-slider-dots" id="sliderDots">
-            @foreach($banners as $index => $banner)
-            <div class="hero-slider-dot {{ $index === 0 ? 'active' : '' }}" data-slide="{{ $index }}"></div>
-            @endforeach
-        </div>
-        @endif
-    </div>
-    @else
-    <div class="hero-banner">
-        <div>
-            <h1>@yield('hero_title', 'Happy Diwali')</h1>
-            <p>@yield('hero_subtitle', 'Festival of Lights')</p>
-        </div>
-    </div>
     @endif
 
     <div class="container my-4">
@@ -1295,7 +1388,7 @@
                 /* --- Qty input (cdr-qty-input): update cart on change --- */
                 panel.querySelectorAll('.cdr-qty-input').forEach(input => {
                     input.addEventListener('change', function () {
-                        const id  = input.dataset.id;
+                        const id = input.dataset.id;
                         const qty = Math.max(1, parseInt(input.value) || 1);
                         input.value = qty;
 
@@ -1400,7 +1493,7 @@
                         var minOrder = parseFloat(opt.dataset.min || 0);
                         var allCities = opt.dataset.allcities === '1';
                         var cities = [];
-                        try { cities = JSON.parse(opt.dataset.cities || '[]'); } catch(e){}
+                        try { cities = JSON.parse(opt.dataset.cities || '[]'); } catch (e) { }
 
                         var citySelect = panel.querySelector('#cdrCitySelect');
 
@@ -1408,7 +1501,7 @@
                             citySelect.innerHTML = '<option value="">-- Select District / City --</option>';
                             if (!allCities && cities.length > 0) {
                                 // Specific cities → add them as options
-                                cities.forEach(function(c) {
+                                cities.forEach(function (c) {
                                     var o = document.createElement('option');
                                     o.value = o.textContent = c;
                                     citySelect.appendChild(o);
@@ -1426,7 +1519,7 @@
 
                         cdrUpdateTotals(packing, minOrder);
                     });
-                    
+
                     // Trigger change on load to populate cities if a state is already selected
                     if (stateSelect.value) {
                         stateSelect.dispatchEvent(new Event('change'));
@@ -1435,8 +1528,8 @@
 
                 function cdrUpdateTotals(packing, minOrder) {
                     var wrap = panel.querySelector('#cdrWrap');
-                    var subtotalVal = parseFloat(wrap ? wrap.dataset.subtotal : 0) || 0;
-                    var total = subtotalVal + packing;
+                    var productTotalVal = parseFloat(wrap ? wrap.dataset.producttotal : 0) || 0;
+                    var total = productTotalVal + packing;
                     var rounded = Math.round(total);
                     var roundOff = rounded - total;
 
@@ -1458,7 +1551,7 @@
                         if (packing > 0) {
                             packRow.style.display = '';
                             packLabel.textContent = 'Packing Charges (' + packing + ')';
-                            packVal.textContent = '₹\u00a0' + packing.toLocaleString('en-IN', {minimumFractionDigits:2});
+                            packVal.textContent = '₹\u00a0' + packing.toLocaleString('en-IN', { minimumFractionDigits: 2 });
                         } else {
                             packRow.style.display = 'none';
                         }
@@ -1468,7 +1561,7 @@
                     if (roundOffEl) roundOffEl.textContent = '₹\u00a0' + roundOff.toFixed(2);
 
                     var overallAmtEl = panel.querySelector('#cdrOverallAmt');
-                    if (overallAmtEl) overallAmtEl.textContent = '₹\u00a0' + rounded.toLocaleString('en-IN', {minimumFractionDigits:2});
+                    if (overallAmtEl) overallAmtEl.textContent = '₹\u00a0' + rounded.toLocaleString('en-IN', { minimumFractionDigits: 2 });
 
                     var packingHiddenEl = panel.querySelector('#cdrPackingHidden');
                     if (packingHiddenEl) packingHiddenEl.value = packing;
@@ -1483,19 +1576,19 @@
                             if (opt && opt.value) {
                                 const minOrder = parseFloat(opt.dataset.min || 0);
                                 const wrap = panel.querySelector('#cdrWrap');
-                                const subtotalVal = parseFloat(wrap ? wrap.dataset.subtotal : 0) || 0;
-                                
-                                if (minOrder > 0 && subtotalVal < minOrder) {
+                                const productTotalVal = parseFloat(wrap ? wrap.dataset.producttotal : 0) || 0;
+
+                                if (minOrder > 0 && productTotalVal < minOrder) {
                                     e.preventDefault();
                                     if (typeof Swal !== 'undefined') {
                                         Swal.fire({
                                             icon: 'warning',
                                             title: 'Minimum Order Requirement',
-                                            html: 'Minimum order amount for <strong>' + opt.value + '</strong> is <strong>₹' + minOrder.toLocaleString('en-IN') + '</strong>.<br><br>Your current subtotal is <strong>₹' + subtotalVal.toLocaleString('en-IN') + '</strong>. Please add more items to proceed.',
+                                            html: 'Minimum order amount for <strong>' + opt.value + '</strong> is <strong>₹' + minOrder.toLocaleString('en-IN') + '</strong>.<br><br>Your current product total is <strong>₹' + productTotalVal.toLocaleString('en-IN') + '</strong>. Please add more items to proceed.',
                                             confirmButtonColor: '#8B1A1A'
                                         });
                                     } else {
-                                        alert('Minimum order amount for ' + opt.value + ' is ₹' + minOrder.toLocaleString('en-IN') + '. Your subtotal is ₹' + subtotalVal.toLocaleString('en-IN') + '.');
+                                        alert('Minimum order amount for ' + opt.value + ' is ₹' + minOrder.toLocaleString('en-IN') + '. Your product total is ₹' + productTotalVal.toLocaleString('en-IN') + '.');
                                     }
                                 }
                             }
@@ -1756,18 +1849,18 @@
 
         // Smooth Scroll for Category Links
         document.querySelectorAll('.nav-category-link').forEach(link => {
-            link.addEventListener('click', function(e) {
+            link.addEventListener('click', function (e) {
                 const href = this.getAttribute('href');
                 if (href.includes('#cat-')) {
                     const targetId = href.split('#')[1];
                     const targetEl = document.getElementById(targetId);
-                    
+
                     if (targetEl && (window.location.pathname === '/' || window.location.pathname === '{{ url('/') }}')) {
                         e.preventDefault();
-                        
+
                         // Close mobile menu if it's open
                         if (mobileMenuContainer) mobileMenuContainer.classList.remove('open');
-                        
+
                         const offset = 90; // Fixed header offset
                         const elementPosition = targetEl.getBoundingClientRect().top;
                         const offsetPosition = elementPosition + window.pageYOffset - offset;
@@ -1776,7 +1869,7 @@
                             top: offsetPosition,
                             behavior: 'smooth'
                         });
-                        
+
                         // Optional: Update URL hash without jumping
                         history.pushState(null, null, '#' + targetId);
                     }
@@ -1810,70 +1903,70 @@
 
     <!-- Banner Slider Script -->
     <script>
-    (function() {
-        const slider = document.getElementById('heroSlider');
-        if (!slider) return;
+        (function () {
+            const slider = document.getElementById('heroSlider');
+            if (!slider) return;
 
-        const slides = slider.querySelectorAll('.hero-slide');
-        const dots = slider.querySelectorAll('.hero-slider-dot');
-        const prevBtn = document.getElementById('sliderPrev');
-        const nextBtn = document.getElementById('sliderNext');
+            const slides = slider.querySelectorAll('.hero-slide');
+            const dots = slider.querySelectorAll('.hero-slider-dot');
+            const prevBtn = document.getElementById('sliderPrev');
+            const nextBtn = document.getElementById('sliderNext');
 
-        if (slides.length <= 1) return;
+            if (slides.length <= 1) return;
 
-        let currentSlide = 0;
-        let autoPlayInterval;
+            let currentSlide = 0;
+            let autoPlayInterval;
 
-        function goToSlide(index) {
-            slides[currentSlide].classList.remove('active');
-            if (dots[currentSlide]) dots[currentSlide].classList.remove('active');
+            function goToSlide(index) {
+                slides[currentSlide].classList.remove('active');
+                if (dots[currentSlide]) dots[currentSlide].classList.remove('active');
 
-            currentSlide = (index + slides.length) % slides.length;
+                currentSlide = (index + slides.length) % slides.length;
 
-            slides[currentSlide].classList.add('active');
-            if (dots[currentSlide]) dots[currentSlide].classList.add('active');
-        }
+                slides[currentSlide].classList.add('active');
+                if (dots[currentSlide]) dots[currentSlide].classList.add('active');
+            }
 
-        function nextSlide() {
-            goToSlide(currentSlide + 1);
-        }
+            function nextSlide() {
+                goToSlide(currentSlide + 1);
+            }
 
-        function prevSlide() {
-            goToSlide(currentSlide - 1);
-        }
+            function prevSlide() {
+                goToSlide(currentSlide - 1);
+            }
 
-        function startAutoPlay() {
-            autoPlayInterval = setInterval(nextSlide, 5000);
-        }
+            function startAutoPlay() {
+                autoPlayInterval = setInterval(nextSlide, 5000);
+            }
 
-        function stopAutoPlay() {
-            clearInterval(autoPlayInterval);
-        }
+            function stopAutoPlay() {
+                clearInterval(autoPlayInterval);
+            }
 
-        // Arrow buttons
-        if (nextBtn) nextBtn.addEventListener('click', function() { stopAutoPlay(); nextSlide(); startAutoPlay(); });
-        if (prevBtn) prevBtn.addEventListener('click', function() { stopAutoPlay(); prevSlide(); startAutoPlay(); });
+            // Arrow buttons
+            if (nextBtn) nextBtn.addEventListener('click', function () { stopAutoPlay(); nextSlide(); startAutoPlay(); });
+            if (prevBtn) prevBtn.addEventListener('click', function () { stopAutoPlay(); prevSlide(); startAutoPlay(); });
 
-        // Dot navigation
-        dots.forEach(function(dot) {
-            dot.addEventListener('click', function() {
-                stopAutoPlay();
-                goToSlide(parseInt(this.dataset.slide));
-                startAutoPlay();
+            // Dot navigation
+            dots.forEach(function (dot) {
+                dot.addEventListener('click', function () {
+                    stopAutoPlay();
+                    goToSlide(parseInt(this.dataset.slide));
+                    startAutoPlay();
+                });
             });
-        });
 
-        // Pause on hover
-        slider.addEventListener('mouseenter', stopAutoPlay);
-        slider.addEventListener('mouseleave', startAutoPlay);
+            // Pause on hover
+            slider.addEventListener('mouseenter', stopAutoPlay);
+            slider.addEventListener('mouseleave', startAutoPlay);
 
-        // Start auto-play
-        startAutoPlay();
-    })();
+            // Start auto-play
+            startAutoPlay();
+        })();
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @stack('scripts')
 
-</body> 
+</body>
 
 </html>

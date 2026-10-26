@@ -25,18 +25,20 @@
 @section('content')
 <div class="container-fluid">
 
-    @if($errors->any())
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong><i class="fas fa-exclamation-triangle me-2"></i>Please fix the following errors:</strong>
-        <ul class="mb-0 mt-2">
-            @foreach($errors->all() as $error)
-            <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    @endif
-
+ 
+@if($errors->any())
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong><i class="fas fa-exclamation-triangle me-2"></i>Please fix the following errors:</strong>
+    <ul class="mb-0 mt-2">
+        @foreach($errors->all() as $error)
+            @if(!str_contains(strtolower($error), 'category'))
+                <li>{{ $error }}</li>
+            @endif
+        @endforeach
+    </ul>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+@endif
     <form action="{{ route('admin.blogs.store') }}" method="POST" enctype="multipart/form-data" id="blog-form">
         @csrf
 
@@ -58,20 +60,6 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
-                            <select class="form-select @error('category') is-invalid @enderror" id="category" name="category" required>
-                                <option value="">Select Category</option>
-                                <option value="General"  {{ old('category') === 'General'  ? 'selected' : '' }}>General</option>
-                                <option value="Science"  {{ old('category') === 'Science'  ? 'selected' : '' }}>Science</option>
-                                <option value="Eco"      {{ old('category') === 'Eco'      ? 'selected' : '' }}>Eco / Green</option>
-                                <option value="Safety"   {{ old('category') === 'Safety'   ? 'selected' : '' }}>Safety</option>
-                                <option value="History"  {{ old('category') === 'History'  ? 'selected' : '' }}>History</option>
-                                <option value="Kids"     {{ old('category') === 'Kids'     ? 'selected' : '' }}>Kids</option>
-                                <option value="Budget"   {{ old('category') === 'Budget'   ? 'selected' : '' }}>Budget Tips</option>
-                            </select>
-                            @error('category')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-                        <div class="col-md-6 mb-3">
                             <label for="published_at" class="form-label">Publish Date</label>
                             <input type="datetime-local" class="form-control @error('published_at') is-invalid @enderror"
                                    id="published_at" name="published_at" value="{{ old('published_at') }}">
@@ -80,14 +68,8 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="excerpt" class="form-label">Excerpt <small class="text-muted fw-normal">(Short summary shown in listing)</small></label>
-                        <textarea class="form-control @error('excerpt') is-invalid @enderror"
-                                  id="excerpt" name="excerpt" rows="2" maxlength="500"
-                                  placeholder="Write a short 1-2 sentence summary...">{{ old('excerpt') }}</textarea>
-                        <small class="text-muted">Max 500 characters. Auto-generated from content if left empty.</small>
-                        @error('excerpt')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
+                    
+                    
                 </div>
 
                 {{-- Content Editor --}}
@@ -130,7 +112,7 @@
                 </div>
 
                 {{-- Submit Buttons --}}
-                <div class="d-flex gap-3 mb-4">
+                <div class="d-flex flex-column flex-sm-row gap-3 mb-4">
                     <button type="submit" class="btn-create" id="submit-btn">
                         <i class="fas fa-save me-2"></i>Create Post
                     </button>
@@ -218,6 +200,21 @@ function previewImage(input) {
         };
         reader.readAsDataURL(input.files[0]);
     }
+}
+
+// Excerpt character counter (only if field exists)
+var excerptField = document.getElementById('excerpt');
+if (excerptField) {
+    excerptField.addEventListener('input', function() {
+        var counter = document.getElementById('excerpt-count');
+        if (counter) counter.textContent = this.value.length;
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        var counter = document.getElementById('excerpt-count');
+        if (counter && excerptField.value) {
+            counter.textContent = excerptField.value.length;
+        }
+    });
 }
 </script>
 @endsection

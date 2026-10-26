@@ -17,7 +17,9 @@ use App\Http\Controllers\CompanyDetailController;
 // ----------------------------
 // Public Routes
 // ----------------------------
-Route::get('/', [FrontController::class, 'index'])->name('home');
+Route::get('/shop', [FrontController::class, 'products']);
+Route::get('/', [FrontController::class, 'products'])->name('front.products');
+Route::get('/home', [FrontController::class, 'index'])->name('home');
 Route::get('/download-products', [FrontController::class, 'downloadProducts'])->name('download.products');
 Route::get('/about', [FrontController::class, 'about'])->name('about');
 Route::get('/terms', [FrontController::class, 'terms'])->name('terms');
@@ -104,9 +106,13 @@ Route::post('/admin/profile/update', [AdminAuthController::class, 'updateProfile
     ->name('admin.profile.update');
 
 // Admin category resource routes (CRUD)
+Route::get('category/export', [CategoryController::class, 'exportExcel'])->middleware('auth')->name('category.export');
+Route::post('category/import', [CategoryController::class, 'importExcel'])->middleware('auth')->name('category.import');
 Route::resource('category', CategoryController::class)->middleware('auth');
 
 // Admin products resource
+Route::get('products/export', [ProductController::class, 'exportExcel'])->middleware('auth')->name('products.export');
+Route::post('products/import', [ProductController::class, 'importExcel'])->middleware('auth')->name('products.import');
 Route::resource('products', ProductController::class)->middleware('auth');
 Route::post('/products/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->middleware('auth')->name('products.toggleStatus');
 
@@ -172,6 +178,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/admin/terms-sections/{termsSection}', [TermsSectionController::class, 'destroy'])->name('admin.terms.destroy');
     Route::post('/admin/terms-sections/reorder', [TermsSectionController::class, 'reorder'])->name('admin.terms.reorder');
 });
+
+Route::get('/privacy', [FrontController::class, 'privacy'])->name('privacy');
+Route::get('/safety-guide', [FrontController::class, 'safetyGuide'])->name('safety.guide');
 
 // Public API: settings JSON for frontend JS
 Route::get('/api/settings', function () {

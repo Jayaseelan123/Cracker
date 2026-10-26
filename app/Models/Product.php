@@ -10,8 +10,27 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'sku','name','name_en','name_ta','rate','price','mrp','discount_rate','final_price',
-        'min_order_value','max_order_value','stock','status','image','image_path','video','video_url','video_status','category_id'
+        'product_id',
+        'sku',
+        'name',
+        'name_en',
+        'name_ta',
+        'rate',
+        'price',
+        'content',
+        'mrp',
+        'discount_rate',
+        'final_price',
+        'min_order_value',
+        'max_order_value',
+        'stock',
+        'status',
+        'image',
+        'image_path',
+        'video',
+        'video_url',
+        'video_status',
+        'category_id'
     ];
 
     /**
@@ -23,14 +42,26 @@ class Product extends Model
     }
 
     /**
-     * Get the image URL for the product
+     * Get the display image for the product (verifies file existence)
+     */
+    public function getDisplayImageAttribute()
+    {
+        $img = $this->image_path ?: $this->image ?: null;
+
+        if ($img && file_exists(public_path('product_images/' . $img))) {
+            return asset('product_images/' . $img);
+        } elseif ($img && file_exists(public_path('images/' . $img))) {
+            return asset('images/' . $img);
+        }
+
+        return 'https://placehold.co/150x150/e2e8f0/64748b?text=No\nImage';
+    }
+
+    /**
+     * Get the image URL for the product (backwards compatibility)
      */
     public function getImageUrl()
     {
-        $imagePath = $this->image_path ?: $this->image ?: null;
-        if ($imagePath) {
-            return asset('product_images/' . $imagePath);
-        }
-        return asset('images/placeholder.png');
+        return $this->display_image;
     }
 }

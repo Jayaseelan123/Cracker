@@ -6,15 +6,15 @@
 @section('content')
 <div class="container-fluid">
     <div class="row mb-4">
-        <div class="col">
+        <div class="col-12 col-md-6">
             <h1>{{ $blog->title }}</h1>
             <p class="text-muted mb-0">
                 <i class="fas fa-calendar-alt"></i> {{ $blog->getFormattedDate() }} |
-                <i class="fas fa-eye"></i> {{ $blog->views }} views |
+               
                 <span class="badge {{ $blog->is_published ? 'bg-success' : 'bg-warning' }}">{{ $blog->is_published ? 'Published' : 'Draft' }}</span>
             </p>
         </div>
-        <div class="col text-end">
+        <div class="col-12 col-md-6 text-md-end mt-3 mt-md-0">
             <a href="{{ route('admin.blogs.edit', $blog) }}" class="btn btn-warning">
                 <i class="fas fa-edit"></i> Edit
             </a>
@@ -46,50 +46,7 @@
             </div>
         </div>
 
-        <div class="col-lg-4">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">📋 Post Details</h5>
-                    <dl class="row small mb-0">
-                        <dt class="col-sm-6">Category:</dt>
-                        <dd class="col-sm-6"><span class="badge bg-info">{{ $blog->category }}</span></dd>
-
-                        <dt class="col-sm-6">Views:</dt>
-                        <dd class="col-sm-6">{{ $blog->views }}</dd>
-
-                        <dt class="col-sm-6">Status:</dt>
-                        <dd class="col-sm-6">
-                            @if($blog->is_published)
-                            <span class="badge bg-success">Published</span>
-                            @else
-                            <span class="badge bg-warning">Draft</span>
-                            @endif
-                        </dd>
-
-                        <dt class="col-sm-6">Created:</dt>
-                        <dd class="col-sm-6">{{ $blog->created_at->format('M d, Y H:i') }}</dd>
-
-                        <dt class="col-sm-6">Updated:</dt>
-                        <dd class="col-sm-6">{{ $blog->updated_at->format('M d, Y H:i') }}</dd>
-
-                        @if($blog->published_at)
-                        <dt class="col-sm-6">Published:</dt>
-                        <dd class="col-sm-6">{{ $blog->published_at->format('M d, Y H:i') }}</dd>
-                        @endif
-
-                        <dt class="col-sm-6">Reading Time:</dt>
-                        <dd class="col-sm-6">{{ $blog->getReadingTime() }}</dd>
-                    </dl>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">📝 Excerpt</h5>
-                    <p class="small mb-0">{{ $blog->excerpt ?: 'No excerpt provided' }}</p>
-                </div>
-            </div>
-        </div>
+        
     </div>
 </div>
 @endsection

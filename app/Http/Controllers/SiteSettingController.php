@@ -23,7 +23,7 @@ class SiteSettingController extends Controller
         // Website
         'website_status'          => 'active',
         'maintenance_message'     => 'We are currently under maintenance. Please check back soon.',
-        'price_format'            => 'INR',
+        'price_format'            => '₹',
         'new_arrival_days'        => '30',
         // Print
         'printout_format'         => 'A4',
@@ -110,7 +110,8 @@ class SiteSettingController extends Controller
         $request->validate([
             'settings' => 'array',
             'terms' => 'array',
-            'terms.*' => 'string|nullable',
+            'terms.*.title' => 'string|nullable',
+            'terms.*.content' => 'string|nullable',
             'zones' => 'array',
             'zones.*.state_name' => 'required|string',
             'zones.*.min_order_amount' => 'required|numeric',
@@ -136,11 +137,13 @@ class SiteSettingController extends Controller
         // Sync Terms
         \App\Models\TermsSection::truncate();
         if ($request->has('terms')) {
-            foreach ($request->terms as $index => $termText) {
-                if (trim($termText)) {
+            foreach ($request->terms as $index => $termData) {
+                $title = trim($termData['title'] ?? '');
+                $content = trim($termData['content'] ?? '');
+                if ($title || $content) {
                     \App\Models\TermsSection::create([
-                        'title_en' => $termText,
-                        'content_en' => '',
+                        'title_en' => $title,
+                        'content_en' => $content,
                         'section_type' => 'terms',
                         'sort_order' => $index,
                         'is_active' => true,

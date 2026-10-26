@@ -14,7 +14,8 @@ class ProductController extends Controller
         $products = Product::with('category')
             ->when($request->search, function ($query) use ($request) {
                 $query->where('name_en', 'LIKE', "%{$request->search}%")
-                    ->orWhere('name_ta', 'LIKE', "%{$request->search}%");
+                    ->orWhere('name_ta', 'LIKE', "%{$request->search}%")
+                    ->orWhere('product_id', 'LIKE', "%{$request->search}%");
             })
             ->orderBy('id', 'DESC')
             ->paginate(20);
@@ -37,6 +38,9 @@ class ProductController extends Controller
         }
         if (Schema::hasColumn('products', 'name_ta')) {
             $rules['name_ta'] = 'nullable|string|max:255';
+        }
+        if (Schema::hasColumn('products', 'content')) {
+            $rules['content'] = 'nullable|string|max:255';
         }
         if (Schema::hasColumn('products', 'category_id')) {
             $rules['category_id'] = 'required|exists:categories,id';
@@ -71,6 +75,11 @@ class ProductController extends Controller
         }
         if (Schema::hasColumn('products', 'video_status')) {
             $rules['video_status'] = 'nullable|in:Active,Inactive';
+        }
+
+        // Product ID: required and unique across all products
+        if (Schema::hasColumn('products', 'product_id')) {
+            $rules['product_id'] = 'required|string|max:20|unique:products,product_id';
         }
 
         $validated = $request->validate($rules);
@@ -179,6 +188,9 @@ class ProductController extends Controller
         if (Schema::hasColumn('products', 'name_ta')) {
             $rules['name_ta'] = 'nullable|string|max:255';
         }
+        if (Schema::hasColumn('products', 'content')) {
+            $rules['content'] = 'nullable|string|max:255';
+        }
         if (Schema::hasColumn('products', 'category_id')) {
             $rules['category_id'] = 'required|exists:categories,id';
         }
@@ -205,6 +217,11 @@ class ProductController extends Controller
         }
         if (Schema::hasColumn('products', 'video_status')) {
             $rules['video_status'] = 'nullable|in:Active,Inactive';
+        }
+
+        // Product ID: required and unique, but allow keeping the same value on update
+        if (Schema::hasColumn('products', 'product_id')) {
+            $rules['product_id'] = 'required|string|max:20|unique:products,product_id,' . $product->id;
         }
 
         $validated = $request->validate($rules);
@@ -315,5 +332,166 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('products.index')->with('success', 'Product Deleted Successfully!');
+    }
+    public function importExcel(Request $request)
+    {
+        $request->validate([
+            'excel_file' => 'required|mimes:xlsx,xls,csv|max:10240'
+        ]);
+
+        try {
+            set_time_limit(300);
+            ini_set('memory_limit', '512M');
+
+            $collection = (new \Rap2hpoutre\FastExcel\FastExcel)->import($request->file('excel_file'));
+
+            // Check headers on the first row
+            $firstRow = $collection->first();
+            if ($firstRow) {
+                $normalizedKeys = [];
+                foreach (array_keys($firstRow) as $key) {
+                    $normalizedKeys[] = strtolower(trim($key));
+                }
+                
+                $nameAliases = ['name_en', 'name', 'product name', 'name (en)', 'name en'];
+                $hasName = array_intersect($nameAliases, $normalizedKeys);
+                if (empty($hasName)) {
+                    return redirect()->back()->with('error', 'Error: Required column "NAME (EN)" or "Product Name" is missing in the Excel file.');
+                }
+                
+                $rateAliases = ['rate', 'price', 'mrp'];
+                $hasRate = array_intersect($rateAliases, $normalizedKeys);
+                if (empty($hasRate)) {
+                    return redirect()->back()->with('error', 'Error: Required column "RATE" or "Price" is missing in the Excel file.');
+                }
+            }
+
+            $count = 0;
+            $failures = [];
+            $rowIndex = 1;
+
+            foreach ($collection as $row) {
+                $rowIndex++;
+
+                $normalizedRow = [];
+                foreach ($row as $key => $value) {
+                    $normalizedRow[strtolower(trim($key))] = is_string($value) ? trim($value) : $value;
+                }
+
+                $isEmptyRow = true;
+                foreach ($normalizedRow as $val) {
+                    if (!empty($val)) {
+                        $isEmptyRow = false;
+                        break;
+                    }
+                }
+                if ($isEmptyRow) {
+                    continue; 
+                }
+
+                // Read from Excel headers (case-insensitive checks)
+                $productId = $normalizedRow['product_id'] ?? $normalizedRow['product id'] ?? null;
+                $nameEn = $normalizedRow['name (en)'] ?? $normalizedRow['name en'] ?? $normalizedRow['name_en'] ?? $normalizedRow['name'] ?? $normalizedRow['product name'] ?? null;
+                $nameTa = $normalizedRow['name (ta)'] ?? $normalizedRow['name ta'] ?? $normalizedRow['name_ta'] ?? $normalizedRow['tamil name'] ?? null;
+                $categoryName = $normalizedRow['category'] ?? $normalizedRow['category name'] ?? null;
+                $rate = $normalizedRow['rate'] ?? $normalizedRow['price'] ?? $normalizedRow['mrp'] ?? 0;
+                $discountRate = $normalizedRow['discount'] ?? $normalizedRow['discount rate'] ?? $normalizedRow['discount_rate'] ?? 0;
+                $finalPrice = $normalizedRow['final price'] ?? $normalizedRow['final_price'] ?? $rate;
+                $stock = $normalizedRow['stock'] ?? $normalizedRow['qty'] ?? $normalizedRow['quantity'] ?? 0;
+                $status = $normalizedRow['status'] ?? 'Active';
+
+                if (empty($nameEn)) {
+                    $failures[] = "Row {$rowIndex}: Missing Product Name.";
+                    continue; 
+                }
+
+                if (empty($rate) || !is_numeric($rate)) {
+                    $failures[] = "Row {$rowIndex}: Missing or invalid Rate/Price for product '{$nameEn}'.";
+                    continue;
+                }
+
+                if (empty($productId)) {
+                    $productId = 'CKR-' . strtoupper(\Illuminate\Support\Str::random(6));
+                }
+
+               // Category is compulsory - must already exist in categories table
+                if (empty($categoryName)) {
+                    $failures[] = "Row {$rowIndex}: Missing Category for product '{$nameEn}'.";
+                    continue;
+                }
+                
+                $category = Category::whereRaw('LOWER(TRIM(name)) = ?', [strtolower(trim($categoryName))])->first();
+                
+                if (!$category) {
+                    $failures[] = "Row {$rowIndex}: Category '{$categoryName}' not found. Please add this category first, or check spelling.";
+                    continue;
+                }
+                
+                $categoryId = $category->id;
+
+                $data = [
+                    'name_en' => $nameEn,
+                    'name' => $nameEn,
+                    'name_ta' => $nameTa,
+                    'category_id' => $categoryId,
+                    'rate' => $rate,
+                    'price' => $finalPrice,
+                    'mrp' => $rate,
+                    'discount_rate' => $discountRate,
+                    'final_price' => $finalPrice,
+                    'stock' => $stock,
+                    'status' => in_array(ucfirst($status), ['Active', 'Inactive']) ? ucfirst($status) : 'Active'
+                ];
+
+                $columns = \Illuminate\Support\Facades\Schema::getColumnListing('products');
+                $data = array_intersect_key($data, array_flip($columns));
+                $data['product_id'] = $productId; 
+
+                Product::updateOrCreate(
+                    ['product_id' => $productId],
+                    $data
+                );
+                
+                $count++;
+            }
+
+            $msg = "{$count} Products imported successfully!";
+            if (count($failures) > 0) {
+                $msg .= "<br><b class='text-danger'>" . count($failures) . " rows failed:</b><ul class='mb-0 mt-2 text-start text-danger' style='font-size:0.85rem;'>";
+                foreach (array_slice($failures, 0, 10) as $f) {
+                    $msg .= "<li>{$f}</li>";
+                }
+                if (count($failures) > 10) {
+                    $msg .= "<li>...and " . (count($failures) - 10) . " more.</li>";
+                }
+                $msg .= "</ul>";
+            } else {
+                $msg .= "<br><b>0 rows failed.</b>";
+            }
+
+            return redirect()->route('products.index')->with('success', $msg);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Product Excel Import Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error importing Excel: ' . $e->getMessage());
+        }
+    }
+    public function exportExcel()
+    {
+        $products = Product::with('category')->get();
+        
+        return (new \Rap2hpoutre\FastExcel\FastExcel($products))->download('products.xlsx', function ($product) {
+            return [
+                'Product ID' => $product->product_id,
+                'Name (EN)' => $product->name_en ?? $product->name,
+                'Name (TA)' => $product->name_ta,
+                'Category' => optional($product->category)->name,
+                'Content'        => $product->content ?? null,
+                'Rate' => $product->rate ?? $product->price ?? $product->mrp ?? 0,
+                'Discount Rate' => $product->discount_rate ?? 0,
+                'Final Price' => $product->final_price ?? $product->price ?? 0,
+                'Stock' => $product->stock,
+                'Status' => $product->status,
+            ];
+        });
     }
 }

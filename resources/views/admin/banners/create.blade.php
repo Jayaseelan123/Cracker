@@ -8,7 +8,7 @@
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm rounded-4">
                 <div class="card-header bg-white py-3 px-4 border-bottom">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
                         <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-image me-2 text-primary"></i>Banner Details</h5>
                         <a href="{{ route('banners.index') }}" class="btn btn-sm btn-light border text-muted">
                             <i class="fas fa-arrow-left me-1"></i> Back
@@ -16,7 +16,7 @@
                     </div>
                 </div>
                 <div class="card-body p-4">
-                    <form action="{{ route('banners.store') }}" method="POST">
+                    <form action="{{ route('banners.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <p class="text-muted small mb-4">Note: <span class="text-danger fw-bold">*</span> Required fields</p>
@@ -35,12 +35,8 @@
 
                         <div class="mb-4">
                             <label class="form-label fw-semibold small text-muted text-uppercase">Select Banner Image <span class="text-danger">*</span></label>
-                            <select name="image" id="imageSelect" class="form-select form-select-lg border-light-subtle bg-light bg-opacity-50" required>
-                                <option value="">-- Choose an image --</option>
-                                @foreach($images as $img)
-                                    <option value="{{ $img }}" {{ old('image') == $img ? 'selected' : '' }}>{{ basename($img) }}</option>
-                                @endforeach
-                            </select>
+                            <input type="file" name="image" id="imageSelect" class="form-control form-control-lg border-light-subtle bg-light bg-opacity-50" accept="image/*" required>
+                            <small class="text-muted">Allowed: JPG, PNG, GIF, WEBP. Max size: 2MB.</small><br>
                             @error('image')<small class="text-danger">{{ $message }}</small>@enderror
                             
                             <!-- Image Preview Area -->
@@ -78,21 +74,20 @@
         const previewContainer = document.getElementById('imagePreviewContainer');
         const previewImg = document.getElementById('imagePreview');
 
-        function updatePreview() {
-            if (imageSelect.value) {
-                previewImg.src = '{{ asset('') }}' + imageSelect.value;
-                previewContainer.classList.remove('d-none');
+        imageSelect.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewContainer.classList.remove('d-none');
+                }
+                reader.readAsDataURL(file);
             } else {
                 previewContainer.classList.add('d-none');
+                previewImg.src = '';
             }
-        }
-
-        imageSelect.addEventListener('change', updatePreview);
-        
-        // Initial check
-        if(imageSelect.value) {
-            updatePreview();
-        }
+        });
     });
 </script>
 

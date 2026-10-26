@@ -17,7 +17,7 @@
       </div>
     @endif
 
-    <form action="{{ route('category.store') }}" method="POST">
+    <form action="{{ route('category.store') }}" method="POST" enctype="multipart/form-data">
       @csrf
       <p class="text-muted small mb-3">Note: <span class="text-danger fw-bold">*</span> Required fields</p>
       <div class="mb-3">
@@ -31,6 +31,11 @@
       <div class="mb-3">
         <label class="form-label">Slug <span class="text-danger">*</span></label>
         <input type="text" name="slug" class="form-control" value="{{ old('slug') }}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Category Image</label>
+        <input type="file" name="image" class="form-control" accept="image/*">
+        <small class="text-muted">Upload a valid image file (jpeg, png, jpg, gif, webp). Max size: 2MB.</small>
       </div>
       <button class="btn btn-success" type="submit">Create</button>
     </form>

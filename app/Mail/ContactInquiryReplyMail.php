@@ -34,8 +34,8 @@ class ContactInquiryReplyMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address(config('mail.from.address', 'noreply@crackerstone.com'), 'Crackers Time'),
-            subject: 'Re: Your Inquiry with Crackers Time',
+            from: new Address(config('mail.from.address', 'noreply@crackerstone.com'), 'Kasthuripyro'),
+            subject: 'Re: Your Inquiry with Kasthuripyro',
         );
     }
 

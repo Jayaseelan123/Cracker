@@ -26,6 +26,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
             padding: 11px 16px;
             background: #f7f8fa;
             border-bottom: 1px solid #dde1e7;
@@ -43,8 +44,11 @@
         }
 
         /* ─── Product Display radios ─────────────────────── */
-        .pd-setting {
+       .pd-setting {
             margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .pd-setting:last-child {
@@ -52,10 +56,9 @@
         }
 
         .pd-label {
-            display: block;
             font-size: 13px;
             color: #333;
-            margin-bottom: 7px;
+            margin-bottom: 0;
         }
 
         .pd-opts {
@@ -90,25 +93,42 @@
             background: #fff;
         }
 
-        /* ─── Terms list ─────────────────────────────────── */
         .term-row {
             display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding: 15px;
+            border: 1px solid #e0e4e8;
+            border-radius: 6px;
+            background: #fbfbfc;
         }
 
-        .term-row input[type="text"] {
-            flex: 1;
+        .term-row-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .term-row-header strong {
+            font-size: 13.5px;
+            color: #333;
+        }
+
+        .term-row input[type="text"],
+        .term-row textarea {
+            width: 100%;
             border: 1px solid #ced4da;
             border-radius: 4px;
-            padding: 7px 11px;
-            font-size: 13px;
+            padding: 9px 12px;
+            font-size: 13.5px;
             color: #444;
             outline: none;
             transition: border-color .2s;
         }
 
-        .term-row input[type="text"]:focus {
+        .term-row input[type="text"]:focus,
+        .term-row textarea:focus {
             border-color: #86b7fe;
         }
 
@@ -288,7 +308,7 @@
         <div class="row">
 
             {{-- ── Product Display ─────────────────── --}}
-            <div class="col-xl-4 col-lg-5">
+            <div class="col-xl-6 col-lg-6">
                 <div class="s-card">
                     <div class="s-card-head" style="cursor:pointer;" @click="showPd=!showPd">
                         <h5 class="s-card-title">Product Display</h5>
@@ -325,31 +345,10 @@
                 </div>
             </div>
 
-            {{-- ── Terms & Conditions ───────────────── --}}
-            <div class="col-xl-4 col-lg-4">
-                <div class="s-card">
-                    <div class="s-card-head">
-                        <h5 class="s-card-title">Terms & Conditions</h5>
-                        <button class="btn-plus" @click="terms.push('')" title="Add term">+</button>
-                    </div>
-                    <div class="s-card-body">
-                        <template x-for="(t, i) in terms" :key="i">
-                            <div class="term-row">
-                                <input type="text" x-model="terms[i]" placeholder="Enter term text…">
-                                <button class="btn-del" @click="terms.splice(i,1)" title="Remove">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </div>
-                        </template>
-                        <p x-show="terms.length === 0" class="text-muted small mb-0">
-                            No terms yet — click <strong>+</strong> to add one.
-                        </p>
-                    </div>
-                </div>
-            </div>
+           
 
             {{-- ── State Selector ───────────────────── --}}
-            <div class="col-xl-4 col-lg-3">
+            <div class="col-xl-6 col-lg-6">
                 <div class="s-card">
                     <div class="s-card-head">
                         <h5 class="s-card-title">State</h5>
@@ -406,6 +405,74 @@
                 </div>
             </template>
         </div>{{-- /ROW 2 --}}
+        
+         {{-- ── Terms & Conditions ───────────────── --}}
+           <div class="container">
+                <div class="container">
+                    <div class="s-card-head">
+                        <h5 class="s-card-title">Terms & Conditions</h5>
+                        <button class="btn-plus" @click="terms.push({title: '', content: ''})" title="Add term">+</button>
+                    </div>
+                    <div class="s-card-body">
+                        <template x-for="(t, i) in terms" :key="i">
+                            <div class="term-row">
+
+                                <!-- Dropdown Header -->
+                                <div class="term-row-header" @click="t.open = !t.open" style="cursor: pointer;">
+
+                                    <strong>
+                                        Topic <span x-text="i + 1"></span>
+                                    </strong>
+
+                                    <div class="d-flex align-items-center gap-2">
+
+                                        <!-- Delete Button -->
+                                        <button type="button" class="btn-del" @click.stop="terms.splice(i, 1)"
+                                            title="Remove">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+
+                                        <!-- Dropdown Icon -->
+                                        <button type="button" class="btn btn-sm p-0 border-0 bg-transparent"
+                                            @click.stop="t.open = !t.open" title="Expand / Collapse">
+                                            <i class="fas" :class="t.open ? 'fa-chevron-up' : 'fa-chevron-down'">
+                                            </i>
+                                        </button>
+
+                                    </div>
+                                </div>
+
+                                <!-- Dropdown Content -->
+                                <div x-show="t.open" x-transition class="term-row-content">
+
+                                    <!-- Heading -->
+                                    <div class="mb-3">
+                                        <label class="pd-label mb-1">Heading</label>
+
+                                        <input type="text" x-model="terms[i].title" class="form-control"
+                                            placeholder="E.g., Shipping & Transportation">
+                                    </div>
+
+                                    <!-- Content -->
+                                    <div>
+                                        <label class="pd-label mb-1">Content</label>
+
+                                        <textarea x-model="terms[i].content" rows="3" class="form-control"
+                                            placeholder="Enter terms content here…"></textarea>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </template>
+
+                        <!-- Empty State -->
+                        <p x-show="terms.length === 0" class="text-muted small mb-0">
+                            No terms yet — click <strong>+</strong> to add one.
+                        </p>
+                    </div>
+                </div>
+            </div>
 
     </div>{{-- /settings-wrap --}}
 @endsection
@@ -434,7 +501,7 @@
         ───────────────────────────────────────────────────── */
         const _INIT = {
             settings: @json($settings),
-            terms: @json($termsItems->pluck('title_en')->values()),
+            terms: @json($termsItems->map(function($t) { return ['title' => $t->title_en, 'content' => $t->content_en]; })->toArray()),
             zones: @json($jsZones),
         };
 
@@ -602,7 +669,7 @@
                         },
                         body: JSON.stringify({
                             settings: this.s,
-                            terms: this.terms.filter(t => t.trim() !== ''),
+                            terms: this.terms.filter(t => t.title.trim() !== '' || t.content.trim() !== ''),
                             zones: this.zones,
                         }),
                     })

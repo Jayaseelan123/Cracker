@@ -15,7 +15,7 @@ class CheckoutController extends Controller
     {
         $cart  = session('cart', []);
         $items = [];
-        $subtotal = 0;
+        $productTotal = 0;
 
         foreach ($cart as $productId => $qty) {
             $product = \App\Models\Product::find($productId);
@@ -23,16 +23,16 @@ class CheckoutController extends Controller
             $price     = $product->price ?? $product->rate ?? $product->mrp ?? 0;
             $itemTotal = $price * $qty;
             $items[]   = ['product' => $product, 'qty' => $qty, 'total' => $itemTotal];
-            $subtotal += $itemTotal;
+            $productTotal += $itemTotal;
         }
 
         $packing = 0;
-        $total   = $subtotal + $packing;
+        $total   = $productTotal + $packing;
 
         // Load active delivery zones for the state dropdown
         $deliveryZones = DeliveryZone::where('is_active', true)->orderBy('sort_order')->get();
 
-        return view('front.checkout', compact('items', 'subtotal', 'packing', 'total', 'deliveryZones'));
+        return view('front.checkout', compact('items', 'productTotal', 'packing', 'total', 'deliveryZones'));
     }
 
     public function placeOrder(Request $request)
@@ -49,12 +49,12 @@ class CheckoutController extends Controller
         ]);
 
         $cart = session('cart', []);
-        $subtotal = 0;
+        $productTotal = 0;
         foreach ($cart as $productId => $qty) {
             $product = \App\Models\Product::find($productId);
             if (! $product) continue;
             $price     = $product->price ?? $product->rate ?? $product->mrp ?? 0;
-            $subtotal += $price * $qty;
+            $productTotal += $price * $qty;
         }
 
         // Resolve delivery zone for the chosen state
@@ -66,17 +66,17 @@ class CheckoutController extends Controller
         $minOrder = $zone ? (float) $zone->min_order_amount  : 0;
 
         // Enforce minimum order amount
-        if ($minOrder > 0 && $subtotal < $minOrder) {
+        if ($minOrder > 0 && $productTotal < $minOrder) {
             return back()->withInput()->withErrors([
                 'state' => "Minimum order for {$data['state']} is ₹" . number_format($minOrder, 2)
-                         . ". Your cart total is ₹" . number_format($subtotal, 2) . ".",
+                         . ". Your cart total is ₹" . number_format($productTotal, 2) . ".",
             ]);
         }
 
-        $total = $subtotal + $packing;
+        $total = $productTotal + $packing;
 
         try {
-            $order = DB::transaction(function () use ($data, $cart, $subtotal, $packing, $total) {
+            $order = DB::transaction(function () use ($data, $cart, $productTotal, $packing, $total) {
                 $orderNumber = 'ORD' . time();
 
                 $orderPayload = [];

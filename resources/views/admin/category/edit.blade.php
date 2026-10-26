@@ -17,7 +17,7 @@
       </div>
     @endif
 
-    <form action="{{ route('category.update', $category->id) }}" method="POST">
+    <form action="{{ route('category.update', $category->id) }}" method="POST" enctype="multipart/form-data">
       @csrf
       @method('PUT')
       <p class="text-muted small mb-3">Note: <span class="text-danger fw-bold">*</span> Required fields</p>
@@ -32,6 +32,17 @@
       <div class="mb-3">
         <label class="form-label">Slug <span class="text-danger">*</span></label>
         <input type="text" name="slug" class="form-control" value="{{ old('slug', $category->slug) }}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Category Image</label>
+        <input type="file" name="image" class="form-control" accept="image/*">
+        <small class="text-muted">Upload a new image to replace the current one. Max size: 2MB.</small>
+        @if($category->image)
+            <div class="mt-2">
+                <p class="mb-1 text-muted small">Current Image:</p>
+                <img src="{{ asset('category_images/' . $category->image) }}" alt="Current Image" class="img-thumbnail" style="max-height: 100px;">
+            </div>
+        @endif
       </div>
       <button class="btn btn-primary" type="submit">Update</button>
     </form>

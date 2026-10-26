@@ -1,7 +1,7 @@
 {{-- =====================================================
-     COMMON FOOTER PARTIAL — CrackerTime
-     Dynamically pulls from company_details table (id=1).
-     All CSS + HTML in one place. No duplication needed.
+COMMON FOOTER PARTIAL — CrackerTime
+Dynamically pulls from company_details table (id=1).
+All CSS + HTML in one place. No duplication needed.
 ====================================================== --}}
 
 @php
@@ -37,8 +37,8 @@
         margin: 0 auto;
         padding: 0 30px;
         display: grid;
-        grid-template-columns: 2fr 1fr 2fr;
-        gap: 50px;
+        grid-template-columns: 2fr 1fr 1fr 2.5fr;
+        gap: 30px;
         position: relative;
         z-index: 2;
     }
@@ -276,9 +276,8 @@
         <div>
             {{-- Show company logo image if set, otherwise fallback to text logo --}}
             @if($company && $company->logo)
-                <img src="{{ asset($company->logo) }}"
-                     alt="{{ $company->company_name ?? 'Company Logo' }}"
-                     class="footer-logo-img">
+                <img src="{{ asset($company->logo) }}" alt="{{ $company->company_name ?? 'Company Logo' }}"
+                    class="footer-logo-img">
             @else
                 <div class="footer-logo">{{ $company->company_name ?? 'CrackerTime' }}</div>
             @endif
@@ -286,15 +285,16 @@
             @if($company && $company->address)
                 <p class="footer-tagline">{{ $company->address }}</p>
             @else
-                <p class="footer-tagline">Premium quality crackers for all your celebrations. Safe, colorful, and memorable moments guaranteed.</p>
+                <p class="footer-tagline">Premium quality crackers for all your celebrations. Safe, colorful, and memorable
+                    moments guaranteed.</p>
             @endif
 
-            <div class="latest-posts">
+            <!-- <div class="latest-posts">
                 <h4>Latest Posts</h4>
                 <p><a href="{{ route('blog') }}#science-behind-the-sparkle">The Science Behind the Sparkle</a></p>
                 <p><a href="{{ route('blog') }}#eco-friendly-crackers-2025">Top 10 Eco-Friendly Crackers</a></p>
                 <p><a href="{{ route('blog') }}#cracker-safety-guide">Ultimate Guide to Cracker Safety</a></p>
-            </div>
+            </div> -->
         </div>
 
         {{-- Column 2: Quick Links --}}
@@ -304,16 +304,25 @@
                 <li><a href="{{ url('/') }}">Home</a></li>
                 <li><a href="{{ route('about') }}">About Us</a></li>
                 <li><a href="{{ route('contact') }}">Contact</a></li>
-                <li><a href="{{ route('blog') }}">Blogs</a></li>
+                <!-- <li><a href="{{ route('blog') }}">Blogs</a></li> -->
+                {{-- <li><a href="{{ route('privacy') }}">Privacy Policy</a></li> --}}
+            </ul>
+        </div>
+        {{-- Column 3: Policies --}}
+        <div class="footer-links">
+            <h4>Policies</h4>
+            <ul>
                 <li><a href="{{ route('terms') }}">Terms & Conditions</a></li>
+
+                <li><a href="{{ route('safety.guide') }}">Safety Guide</a></li>
                 <li><a href="{{ route('privacy') }}">Privacy Policy</a></li>
             </ul>
         </div>
 
-        {{-- Column 3: Contact Info --}}
-        <div class="footer-contact">
-            <h4>Contact Info</h4>
-
+        <!-- {{-- Column 3: Contact Info --}} -->
+        <!-- <div class="footer-contact">
+            <h4>Contact Info</h4> -->
+<!-- 
             {{-- Phone --}}
             @if($company && $company->contact_number)
                 <p>
@@ -322,19 +331,6 @@
                 </p>
             @else
                 <p><i class="fas fa-phone"></i> +919488864547</p>
-            @endif
-
-            {{-- WhatsApp --}}
-            @if($company && $company->whatsapp_number)
-                <p>
-                    <i class="fab fa-whatsapp"></i>
-                    <span>
-                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $company->whatsapp_number) }}"
-                           target="_blank" class="footer-whatsapp-btn">
-                            <i class="fab fa-whatsapp"></i> Chat on WhatsApp
-                        </a>
-                    </span>
-                </p>
             @endif
 
             {{-- Address --}}
@@ -346,9 +342,21 @@
             @else
                 <p>
                     <i class="fas fa-map-marker-alt"></i>
-                    Door No 2/554/C3, Southside school Near Sivakasi to Sattur main road, Mettamalai, Sivakasi - 626203
+                    Door No 2/554/C3, Southside school Near Kasthuripyro to Sattur main road, Mettamalai, Kasthuripyro - 626203
                 </p>
             @endif
+            {{-- WhatsApp --}}
+            @if($company && $company->whatsapp_number)
+                <p>
+                    <span>
+                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $company->whatsapp_number) }}"
+                            target="_blank" class="footer-whatsapp-btn">
+                            <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+                        </a>
+                    </span>
+                </p>
+            @endif -->
+
 
             {{-- Bank Details --}}
             @if($company && ($company->bank_ac_no || $company->bank_name))
@@ -377,8 +385,7 @@
 
     <div class="footer-line"></div>
 
-    <div class="footer-copy" style="margin-top: 30px;text-align: center;">
-        <div>&copy; {{ date('Y') }} {{ $company->company_name ?? 'Crackers Time' }}. All rights reserved. | Delivery Available</div>
-       
+    <div style="margin-top:30px; width:100%; text-align:center;">
+        &copy; 2026 Kasthuri pyro . All rights reserved. | Delivery Available
     </div>
 </footer>

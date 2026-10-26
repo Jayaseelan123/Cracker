@@ -13,6 +13,7 @@ class Category extends Model
         'name',
         'tamil_name',
         'slug',
+        'image',
     ];
 
     /**

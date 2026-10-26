@@ -11,15 +11,29 @@ class OrderController extends Controller
     // ... existing code ...
     public function index(Request $request)
     {
-        $orders = Order::where(function($q) {
+        $query = Order::with('items.product')->where(function($q) {
                         $q->where('order_number', 'NOT LIKE', 'DIR-%')
                           ->orWhereNull('order_number');
-                    })
-                    ->when($request->status && $request->status != "All", function($query) use ($request){
-                        $query->where('status', $request->status);
-                    })
-                    ->orderBy('id','DESC')
-                    ->paginate(20);
+                    });
+
+        // Status filter
+        if ($request->status && $request->status !== 'All') {
+            $query->where('status', $request->status);
+        }
+
+        // Search filter
+        if ($search = trim($request->input('search', ''))) {
+            $query->where(function($q) use ($search) {
+                $q->where('order_number',   'like', "%{$search}%")
+                  ->orWhere('customer_name',  'like', "%{$search}%")
+                  ->orWhere('customer_phone', 'like', "%{$search}%")
+                  ->orWhere('customer_email', 'like', "%{$search}%");
+            });
+        }
+
+        $orders = $query->orderBy('id', 'DESC')
+                        ->paginate(20)
+                        ->appends($request->only(['status', 'search']));
 
         return view('admin.orders.index', compact('orders'));
     }

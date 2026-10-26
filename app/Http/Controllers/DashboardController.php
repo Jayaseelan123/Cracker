@@ -11,11 +11,12 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalOrders = Order::count();
-        $pendingOrders = Order::where('status', 'Pending')->count();
+        $totalOrders   = Order::count();
+        // DB stores status as lowercase ('pending'), not 'Pending'
+        $pendingOrders = Order::where('status', 'pending')->count();
         $totalProducts = Product::count();
-        $categories = Category::count();
-        $recentOrders = Order::orderBy('id', 'DESC')->limit(5)->get();
+        $categories    = Category::count();
+        $recentOrders  = Order::orderBy('id', 'DESC')->limit(5)->get();
 
         return view('admin.dashboard.index', compact(
             'totalOrders', 'pendingOrders', 'totalProducts', 'categories', 'recentOrders'

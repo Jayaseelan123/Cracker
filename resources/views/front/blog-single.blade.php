@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $blog->title . ' - Blog - Crackers Time')
+@section('title', $blog->title . ' - Blog - Kasthuripyro')
 @section('hero_title', $blog->title)
 @section('hero_subtitle', $blog->published_at ? $blog->published_at->format('M d, Y') : $blog->created_at->format('M d, Y'))
 

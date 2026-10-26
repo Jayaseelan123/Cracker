@@ -8,10 +8,10 @@
             $fontSize = \App\Models\SiteSetting::get('pdf_font_size', '9');
             $showDiscount = \App\Models\SiteSetting::bool('show_discount_row', true);
             $showCode = \App\Models\SiteSetting::bool('show_product_code', false);
-            $priceFormat = \App\Models\SiteSetting::get('price_format', 'INR');
+            $priceFormat = \App\Models\SiteSetting::get('price_format', '&#8377;');
         @endphp
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'DejaVu Sans', sans-serif;
             margin: 0;
             padding: 20px;
             color: #333;
@@ -69,7 +69,7 @@
         @if(\App\Models\SiteSetting::bool('print_show_logo', true) && $company && $company->logo)
             <img src="{{ public_path($company->logo) }}" alt="Logo" style="max-height: 50px; margin-bottom: 10px;">
         @endif
-        <h1>{{ $company->company_name ?? 'CrackerTime' }}</h1>
+        <h1>{{ $company->company_name ?? 'Kasthuripyro' }}</h1>
         <p>Products Price List - {{ date('F d, Y') }}</p>
         @if($company && $company->contact_number)
             <p>Phone: {{ $company->contact_number }} 
@@ -86,26 +86,26 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="10%" class="text-center">S.No</th>
-                        <th width="{{ $showDiscount ? '40%' : '65%' }}">Product Name</th>
+                        <th width="15%" class="text-center">Product ID</th>
+                        <th width="{{ $showDiscount ? '35%' : '60%' }}">Product Name</th>
                         @if($showDiscount)
-                        <th width="25%" class="text-center">MRP ({{ $priceFormat }})</th>
+                        <th width="25%" class="text-center">MRP ({!! $priceFormat !!})</th>
                         @endif
-                        <th width="25%" class="text-center">Price ({{ $priceFormat }})</th>
+                        <th width="25%" class="text-center">Price ({!! $priceFormat !!})</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($category->products as $index => $product)
                         <tr>
-                            <td class="text-center">{{ $index + 1 }}</td>
+                            <td class="text-center" style="font-weight:700; color:#0a4f68; font-size:0.88em; letter-spacing:0.5px;">
+                                {{ $product->product_id ?? ('CKR-' . str_pad($product->id, 4, '0', STR_PAD_LEFT)) }}
+                            </td>
                             <td>
                                 @if($showCode && !empty($product->sku))
                                     <span style="font-size: 0.9em; color: #555;">[{{ $product->sku }}]</span> 
                                 @endif
                                 {{ $product->name_en ?? $product->name }}
-                                @if(!empty($product->name_ta))
-                                    <br><small style="color: #666;">{{ $product->name_ta }}</small>
-                                @endif
+
                             </td>
                             @if($showDiscount)
                             <td class="text-center">{{ number_format($product->mrp, 2) }}</td>

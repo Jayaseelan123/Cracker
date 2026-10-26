@@ -27,7 +27,7 @@
         $discountTotal += ($mrp - $price) * $qty;
     }
 
-    $subTotal = $netTotal - $discountTotal;
+    $productTotal = $netTotal - $discountTotal;
 
     $zones = DeliveryZone::orderBy('state_name')->get();
     $zonesJs = $zones->map(fn($z) => [
@@ -40,7 +40,7 @@
 @endphp
 
 {{-- ═══════════════════ CART DRAWER ═══════════════════ --}}
-<div class="cdr-wrap" id="cdrWrap" data-subtotal="{{ $subTotal }}">
+<div class="cdr-wrap" id="cdrWrap" data-producttotal="{{ $productTotal }}">
 
     {{-- ── SHARED HEADER ── --}}
     <div class="cdr-header">
@@ -82,8 +82,9 @@
             <hr class="cdr-divider">
 
             <div class="cdr-totals">
-                <div class="cdr-total-row subtotal">
-                    <span>Sub Total</span><span>₹ {{ number_format($subTotal, 2) }}</span>
+                <div class="cdr-total-row cdr-grand-total" style="display: flex; justify-content: space-between; font-size: 18px; font-weight: 800; color: #1e293b; padding-top: 5px;">
+                    <span>Sub Total</span>
+                    <span>₹ {{ number_format($productTotal, 2) }}</span>
                 </div>
             </div>
 
@@ -187,7 +188,7 @@
             <div class="cdr-order-summary">
                 <div class="cdr-os-row">
                     <span>Sub Total</span>
-                    <span>₹&nbsp;{{ number_format($subTotal, 2) }}</span>
+                    <span>₹&nbsp;{{ number_format($productTotal, 2) }}</span>
                 </div>
                 <div class="cdr-os-row cdr-os-min" id="cdrMinOrderRow" style="display:none;">
                     <span>Min.Order Amount</span>
@@ -200,12 +201,12 @@
 
                 <div class="cdr-os-row cdr-os-overall">
                     <span>Overall Amount</span>
-                    <span id="cdrOverallAmt">₹&nbsp;{{ number_format($subTotal, 2) }}</span>
+                    <span id="cdrOverallAmt">₹&nbsp;{{ number_format($productTotal, 2) }}</span>
                 </div>
             </div>
 
             <input type="hidden" name="packing_charges" id="cdrPackingHidden" value="0">
-            <input type="hidden" name="subtotal" value="{{ $subTotal }}">
+            <input type="hidden" name="product_total" value="{{ $productTotal }}">
 
             {{-- BUTTONS --}}
             <div class="cdr-btn-row">
@@ -457,15 +458,6 @@
         padding: 4px 0;
     }
 
-    .cdr-total-row.subtotal {
-        font-weight: 800;
-        font-size: 16px;
-        color: #0f172a;
-        border-top: 1px solid #e2e8f0;
-        margin-top: 8px;
-        padding-top: 12px;
-    }
-
     /* Confirm button */
     .cdr-confirm-btn {
         display: flex;
@@ -713,5 +705,33 @@
         border-color: transparent;
         font-weight: 700;
         box-shadow: 0 2px 6px rgba(139, 26, 26, 0.3);
+    }
+
+    @media (max-width: 480px) {
+        .cdr-item {
+            flex-wrap: wrap;
+            padding: 12px;
+            gap: 10px;
+        }
+        .cdr-item-details {
+            width: calc(100% - 74px);
+        }
+        .cdr-item-price-row {
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 5px;
+        }
+        .cdr-item-total {
+            width: 100%;
+            text-align: right;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 8px;
+            margin-top: 4px;
+        }
+    }
+
+    /* Fix SweetAlert overlap behind drawer */
+    .swal2-container {
+        z-index: 99999 !important;
     }
 </style>

@@ -12,26 +12,17 @@ class BannerController extends Controller
     {
         $banners = Banner::when($request->search, function ($query) use ($request) {
             $query->where('title', 'LIKE', "%{$request->search}%")
-                  ->orWhere('subtitle', 'LIKE', "%{$request->search}%");
+                ->orWhere('subtitle', 'LIKE', "%{$request->search}%");
         })
-        ->latest()
-        ->paginate(10);
+            ->latest()
+            ->paginate(10);
 
         return view('admin.banners.index', compact('banners'));
     }
 
     public function create()
     {
-        // Get images from public/images
-        $imageFiles = File::files(public_path('images'));
-        $images = [];
-        foreach ($imageFiles as $file) {
-            if (in_array($file->getExtension(), ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
-                $images[] = 'images/' . $file->getFilename();
-            }
-        }
-        
-        return view('admin.banners.create', compact('images'));
+        return view('admin.banners.create');
     }
 
     public function store(Request $request)
@@ -39,13 +30,25 @@ class BannerController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'subtitle' => 'required|string|max:255',
-            'image' => 'required|string',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
+
+        $imagePath = '';
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = time() . '_' . \Illuminate\Support\Str::slug($request->title) . '.' . $image->getClientOriginalExtension();
+            $uploadDir = public_path('images/banners');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            $image->move($uploadDir, $filename);
+            $imagePath = 'images/banners/' . $filename;
+        }
 
         Banner::create([
             'title' => $request->title,
             'subtitle' => $request->subtitle,
-            'image' => $request->image,
+            'image' => $imagePath,
             'is_active' => $request->input('is_active'),
         ]);
 
@@ -54,15 +57,7 @@ class BannerController extends Controller
 
     public function edit(Banner $banner)
     {
-        $imageFiles = File::files(public_path('images'));
-        $images = [];
-        foreach ($imageFiles as $file) {
-            if (in_array($file->getExtension(), ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
-                $images[] = 'images/' . $file->getFilename();
-            }
-        }
-
-        return view('admin.banners.edit', compact('banner', 'images'));
+        return view('admin.banners.edit', compact('banner'));
     }
 
     public function update(Request $request, Banner $banner)
@@ -70,13 +65,30 @@ class BannerController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'subtitle' => 'required|string|max:255',
-            'image' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
+
+        $imagePath = $banner->image;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = time() . '_' . \Illuminate\Support\Str::slug($request->title) . '.' . $image->getClientOriginalExtension();
+            $uploadDir = public_path('images/banners');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            $image->move($uploadDir, $filename);
+            $imagePath = 'images/banners/' . $filename;
+
+            // Delete old image if exists
+            if ($banner->image && file_exists(public_path($banner->image))) {
+                unlink(public_path($banner->image));
+            }
+        }
 
         $banner->update([
             'title' => $request->title,
             'subtitle' => $request->subtitle,
-            'image' => $request->image,
+            'image' => $imagePath,
             'is_active' => $request->input('is_active'),
         ]);
 

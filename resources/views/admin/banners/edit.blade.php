@@ -8,7 +8,7 @@
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm rounded-4">
                 <div class="card-header bg-white py-3 px-4 border-bottom">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
                         <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-edit me-2 text-primary"></i>Edit Banner Details</h5>
                         <a href="{{ route('banners.index') }}" class="btn btn-sm btn-light border text-muted">
                             <i class="fas fa-arrow-left me-1"></i> Back
@@ -16,7 +16,7 @@
                     </div>
                 </div>
                 <div class="card-body p-4">
-                    <form action="{{ route('banners.update', $banner->id) }}" method="POST">
+                    <form action="{{ route('banners.update', $banner->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -35,20 +35,16 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-semibold small text-muted text-uppercase">Select Banner Image <span class="text-danger">*</span></label>
-                            <select name="image" id="imageSelect" class="form-select form-select-lg border-light-subtle bg-light bg-opacity-50" required>
-                                <option value="">-- Choose an image --</option>
-                                @foreach($images as $img)
-                                    <option value="{{ $img }}" {{ (old('image', $banner->image) == $img) ? 'selected' : '' }}>{{ basename($img) }}</option>
-                                @endforeach
-                            </select>
+                            <label class="form-label fw-semibold small text-muted text-uppercase">Select Banner Image</label>
+                            <input type="file" name="image" id="imageSelect" class="form-control form-control-lg border-light-subtle bg-light bg-opacity-50" accept="image/*">
+                            <small class="text-muted">Allowed: JPG, PNG, GIF, WEBP. Max size: 2MB. Leave blank to keep current image.</small><br>
                             @error('image')<small class="text-danger">{{ $message }}</small>@enderror
                             
                             <!-- Image Preview Area -->
-                            <div class="mt-3 d-none" id="imagePreviewContainer">
+                            <div class="mt-3 {{ !$banner->image ? 'd-none' : '' }}" id="imagePreviewContainer">
                                 <label class="form-label fw-semibold small text-muted text-uppercase">Image Preview</label>
                                 <div class="rounded-3 overflow-hidden border border-2 shadow-sm" style="max-height: 250px; background: #f8fafc;">
-                                    <img src="" id="imagePreview" class="w-100 h-100 object-fit-contain" style="max-height: 250px; object-fit: contain;">
+                                    <img src="{{ $banner->image ? asset($banner->image) : '' }}" id="imagePreview" class="w-100 h-100 object-fit-contain" style="max-height: 250px; object-fit: contain;">
                                 </div>
                             </div>
                         </div>
@@ -78,22 +74,27 @@
         const imageSelect = document.getElementById('imageSelect');
         const previewContainer = document.getElementById('imagePreviewContainer');
         const previewImg = document.getElementById('imagePreview');
+        const currentImageUrl = "{{ $banner->image ? asset($banner->image) : '' }}";
 
-        function updatePreview() {
-            if (imageSelect.value) {
-                previewImg.src = '{{ asset('') }}' + imageSelect.value;
-                previewContainer.classList.remove('d-none');
+        imageSelect.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewContainer.classList.remove('d-none');
+                }
+                reader.readAsDataURL(file);
             } else {
-                previewContainer.classList.add('d-none');
+                if (currentImageUrl) {
+                    previewImg.src = currentImageUrl;
+                    previewContainer.classList.remove('d-none');
+                } else {
+                    previewContainer.classList.add('d-none');
+                    previewImg.src = '';
+                }
             }
-        }
-
-        imageSelect.addEventListener('change', updatePreview);
-        
-        // Initial check
-        if(imageSelect.value) {
-            updatePreview();
-        }
+        });
     });
 </script>
 

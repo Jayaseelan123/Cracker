@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Shop')
+@section('title', 'Buy Sivakasi Crackers Online at Kasthuri Crackers')
+@section('meta_description', 'Shop the widest range of online crackers Sivakasi has to offer. Kasthuri Crackers brings quality Diwali fireworks to your doorstep at wholesale prices.')
 
 @section('hero_title', 'Welcome to CrackerTime')
 @section('hero_subtitle', 'Shop the best festive crackers')
@@ -8,451 +9,883 @@
 @section('content')
     <!-- CATEGORIES EXPLORER (Image Style) -->
     @if(\App\Models\SiteSetting::bool('enable_category_filter', true))
-    <div class="category-explorer-section mb-5">
-        <div class="section-title-wrapper text-center mb-5">
-            <h2 class="section-title">Explore Categories</h2>
-            <div class="title-underline"></div>
-        </div>
-        
-        <div class="category-carousel-container">
-            <button class="carousel-nav-btn prev" id="catPrev"><i class="fas fa-chevron-left"></i></button>
-            <div class="category-grid carousel-scroll" id="catCarousel">
-                @foreach($categories as $category)
-                @php 
-                    $firstProduct = $category->products->first();
-                    $catImg = $firstProduct ? asset('product_images/' . ($firstProduct->image_path ?: $firstProduct->image ?: 'demo.jpg')) : asset('images/category-placeholder.jpg');
-                @endphp
-                <a href="#cat-{{ $category->slug ?? Str::slug($category->name) }}" class="category-card nav-category-link">
-                    <div class="category-img-container">
-                        <img src="{{ $catImg }}" alt="{{ $category->name }}">
-                    </div>
-                    <div class="category-card-name">{{ $category->name }}</div>
-                </a>
-                @endforeach
+        <div class="category-explorer-section mb-5">
+            <div class="section-title-wrapper text-center mb-4">
+                <h2 class="section-title">Explore Categories</h2>
+                <div class="title-underline"></div>
             </div>
-            <button class="carousel-nav-btn next" id="catNext"><i class="fas fa-chevron-right"></i></button>
-        </div>
-    </div>
-    @endif
 
-    <!-- PRODUCTS SECTION START -->
-    @if(\App\Models\SiteSetting::bool('show_pricelist_home', true))
-    <div id="products-list" class="text-center mb-5 mt-5" style="scroll-margin-top: 80px;">
-        <h2 class="section-title">Our Products</h2>
-        <div class="title-underline"></div>
-        <p class="text-muted mt-2">Browse our wide range of premium crackers</p>
-    </div>
+            <!-- CATEGORY SEARCH BAR -->
+            <div class="search-filter-container container mb-4" style="max-width: 500px;">
+                <div class="input-group shadow-sm rounded-pill overflow-hidden border" style="background:#fff;">
+                    <span class="input-group-text bg-white border-0 ps-3">
+                        <i class="fas fa-search text-muted"></i>
+                    </span>
+                    <input type="text" id="categorySearchInput" class="form-control border-0 py-2 ps-2"
+                        placeholder="Search categories..." style="outline: none; box-shadow: none;">
+                    <button class="btn border-0 bg-white pe-3" type="button" id="clearCategorySearchBtn" style="display: none;">
+                        <i class="fas fa-times text-muted"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="noCategoriesMsg" class="text-center text-muted mb-4" style="display: none;">
+                <h5 class="mb-0">No Categories Found</h5>
+            </div>
 
-    @if(\App\Models\SiteSetting::bool('enable_search_filter', true))
-    <div class="search-filter-container container mb-5" style="max-width: 500px;">
-        <div class="input-group shadow-sm rounded-pill overflow-hidden border" style="background:#fff;">
-            <span class="input-group-text bg-white border-0 ps-3">
-                <i class="fas fa-search text-muted"></i>
-            </span>
-            <input type="text" id="productSearchInput" class="form-control border-0 py-2 ps-2" placeholder="Search products by name or code..." style="outline: none; box-shadow: none;">
-            <button class="btn border-0 bg-white pe-3" type="button" id="clearSearchBtn" style="display: none;">
-                <i class="fas fa-times text-muted"></i>
-            </button>
-        </div>
-    </div>
-    @endif
-
-    @foreach($categories as $category)
-        <div class="category-header" id="cat-{{ $category->slug ?? Str::slug($category->name) }}">
-            <i class="fas fa-fire"></i>
-            {{ $category->name }}
-        </div>
-
-        <div class="table-responsive">
-            <table class="table product-table">
-                <thead>
-                    <tr>
-                        <th style="text-align:left;">Image</th>
-                        <th style="text-align:left;">Product</th>
-                        @if(\App\Models\SiteSetting::bool('show_discount_row', true))
-                        <th style="text-align:center;">MRP</th>
-                        @endif
-                        <th style="text-align:center;">Price</th>
-                        <th style="text-align:center;">Quantity</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($category->products as $product)
-                        @php
-                            $productImg   = asset('product_images/' . ($product->image_path ?: $product->image ?: 'demo.jpg'));
-                            $vid = '';
-                            if (($product->video_status ?? 'Active') === 'Active') {
-                                // Prioritize local MP4 file upload over YouTube URL
-                                if (!empty($product->video)) {
-                                    $vid = asset('product_videos/' . $product->video);
-                                } elseif (!empty($product->video_url)) {
-                                    $vid = $product->video_url;
-                                }
-                            }
-                            $productVideo = $vid;
-                            $productName  = addslashes($product->name_en ?? $product->name ?? '');
-                            $productTa    = addslashes($product->name_ta ?? '');
-                            $productMrp   = number_format($product->mrp, 2);
-                            $productPrice = number_format($product->price, 2);
+            <div class="category-carousel-container">
+                <button class="carousel-nav-btn prev" id="catPrev"><i class="fas fa-chevron-left"></i></button>
+                <div class="category-grid carousel-scroll" id="catCarousel">
+                    @foreach($categories as $category)
+                        @php 
+                                                                                                                                                                                    $catImg = $category->image ? asset('category_images/' . $category->image) : asset('images/category.png');
+                            $catSlug = $category->slug ?? Str::slug($category->name);
                         @endphp
-                        <tr class="product-row">
-                            <td style="text-align:left; cursor:pointer;"
-                                onclick="showProductCarousel('{{ $productName }}','{{ $productTa }}','{{ $productImg }}','{{ $productMrp }}','{{ $productPrice }}','{{ $productVideo }}')">
-                                @if($vid)
-                                    <div style="position:relative;display:inline-block;">
-                                        <img src="{{ $productImg }}" alt="{{ $product->name_en ?? $product->name }}">
-                                        <span style="position:absolute;bottom:3px;right:3px;background:rgba(0,0,0,0.6);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;">
-                                            <i class="fas fa-play" style="color:#fff;font-size:9px;margin-left:2px;"></i>
-                                        </span>
-                                    </div>
-                                @else
-                                    <img src="{{ $productImg }}" alt="{{ $product->name_en ?? $product->name }}">
-                                @endif
-                            </td>
-                            <td style="text-align:left; cursor:pointer;"
-                                onclick="showProductCarousel('{{ $productName }}','{{ $productTa }}','{{ $productImg }}','{{ $productMrp }}','{{ $productPrice }}','{{ $productVideo }}')">
-                                @if(\App\Models\SiteSetting::bool('show_product_code', false) && !empty($product->sku))
-                                    <div class="text-primary small fw-bold mb-1">Code: {{ $product->sku }}</div>
-                                @endif
-                                <div>{{ $product->name_en ?? $product->name ?? '—' }}</div>
-                                @if(!empty($product->name_ta))
-                                    <div class="text-muted small">{{ $product->name_ta }}</div>
-                                @endif
-                                @if($vid)
-                                    <div class="mt-1"><span class="badge" style="background:#0a4f68;font-size:10px;"><i class="fas fa-video me-1"></i>Has Video</span></div>
-                                @endif
-                            </td>
-                            @if(\App\Models\SiteSetting::bool('show_discount_row', true))
-                            <td style="text-align:center; font-weight: bold; font-size: 1.1em; color: #333;">{{ \App\Models\SiteSetting::get('price_format', 'INR') }} {{ number_format($product->mrp, 2) }}</td>
-                            @endif
-                            <td style="text-align:center; font-weight: bold; font-size: 1.1em; color: #333;">{{ \App\Models\SiteSetting::get('price_format', 'INR') }} {{ number_format($product->price, 2) }}</td>
-                            @php $cartItems = session('cart', []);
-                            $cartQty = $cartItems[$product->id] ?? 0; @endphp
-                            <td style="text-align:center;">
-                                @if($product->stock > 0)
-                                    <div class="qty-controls" style="justify-content:center;">
-                                        <button type="button" data-id="{{ $product->id }}"
-                                            class="qty-btn minus qty-minus-btn">-</button>
-                                        <input type="text" readonly class="qty-input qty-display-{{ $product->id }}"
-                                            value="{{ $cartQty }}">
-                                        <button type="button" data-id="{{ $product->id }}" class="qty-btn plus qty-plus-btn">+</button>
-                                    </div>
-                                    <div class="text-success small mt-1">In Stock: {{ $product->stock }}</div>
-                                @else
-                                    <div class="text-danger fw-bold">Out of Stock</div>
-                                    <div class="qty-controls" style="justify-content:center; opacity: 0.5; pointer-events: none;">
-                                        <button type="button" class="qty-btn minus" disabled>-</button>
-                                        <input type="text" readonly class="qty-input" value="0">
-                                        <button type="button" class="qty-btn plus" disabled>+</button>
-                                    </div>
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6">No products in this category.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                        <a href="{{ route('front.products') }}#cat-{{ $catSlug }}" class="category-card">
+                            <div class="category-img-container">
+                                <img src="{{ $catImg }}" alt="{{ $category->name }}">
+                            </div>
+                            <div class="category-card-name">{{ $category->name }}</div>
+                        </a>
+                    @endforeach
+                </div>
+                <button class="carousel-nav-btn next" id="catNext"><i class="fas fa-chevron-right"></i></button>
+            </div>
         </div>
-    @endforeach
     @endif
 
-    {{-- ============================================================
-         PRODUCT IMAGE + VIDEO CAROUSEL LIGHTBOX MODAL
-    ============================================================ --}}
-    <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-            <div class="modal-content border-0 shadow-lg rounded-4">
+    <!-- Shop CTA Banner -->
+    <!-- <div class="text-center py-5 my-4" style="background: linear-gradient(135deg, #0d6b8a 0%, #1a8ab0 100%); border-radius: 20px; box-shadow: 0 10px 40px rgba(13,107,138,0.2);">
+                                        <i class="fas fa-fire fa-3x mb-3" style="color:#ff9900;"></i>
+                                        <h3 class="fw-bold text-white mb-2">Explore Our Full Product Range</h3>
+                                        <p class="text-white mb-4" style="opacity:0.85;">Browse all categories, search by name or code, and add directly to your cart.</p>
+                                        <a href="{{ route('front.products') }}" class="btn btn-lg rounded-pill px-5 fw-bold" style="background: linear-gradient(135deg,#ff9900,#ff3b3b); color:#fff; box-shadow: 0 4px 20px rgba(255,153,0,0.4); font-size:1.1rem;">
+                                            <i class="fas fa-shopping-bag me-2"></i> View All Products
+                                        </a>
+                                    </div> -->
 
-                {{-- Header --}}
-                <div class="modal-header border-0 px-4 py-3"
-                     style="background:linear-gradient(135deg,#0a4f68,#1a8ab0);">
-                    <div>
-                        <h5 class="modal-title fw-bold text-white mb-0" id="productModalLabel"></h5>
-                        <p class="text-white opacity-75 small mb-0" id="modalProductTaName"></p>
-                    </div>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
+    <!-- ============================================================
+                                         SECTION 1 : SHOP BY OCCASION
+                                    ============================================================ -->
+    <div class="py-5 my-5">
+        <div class="section-title-wrapper text-center mb-5">
+            <h2 class="section-title">Celebrate Every Special Moment</h2>
 
-                {{-- Carousel body --}}
-                <div class="modal-body p-0" style="background:#111;min-height:360px;">
-                    <div id="productCarousel" class="carousel slide h-100" data-bs-ride="false">
+            <div class="title-underline mx-auto"></div>
 
-                        <div class="carousel-inner" id="carouselInner"
-                             style="background:#111;min-height:360px;">
-                            {{-- slides injected by JS --}}
+            <p class="text-muted mt-3">
+                Discover the perfect fireworks to make every celebration bright,
+                joyful and unforgettable
+            </p>
+        </div>
+
+        <div class="row g-4">
+
+            @php
+                $occasions = [
+                    [
+                        'icon' => 'fa-star',
+                        'color' => '#ff9800',
+                        'bg' => 'rgba(255,152,0,0.10)',
+                        'title' => 'Festival Celebrations',
+                        'desc' => 'Bring extra brightness to festive gatherings with colourful crackers and spectacular fireworks.'
+                    ],
+
+                    [
+                        'icon' => 'fa-gift',
+                        'color' => '#e91e63',
+                        'bg' => 'rgba(233,30,99,0.10)',
+                        'title' => 'Birthday Moments',
+                        'desc' => 'Turn birthdays into unforgettable memories with exciting crackers made for special moments.'
+                    ],
+
+                    [
+                        'icon' => 'fa-heart',
+                        'color' => '#9c27b0',
+                        'bg' => 'rgba(156,39,176,0.10)',
+                        'title' => 'Wedding Events',
+                        'desc' => 'Add a magical touch to weddings with elegant fireworks and celebration-ready combos.'
+                    ],
+
+                    [
+                        'icon' => 'fa-star',
+                        'color' => '#1976d2',
+                        'bg' => 'rgba(25,118,210,0.10)',
+                        'title' => 'Grand Gatherings',
+                        'desc' => 'Make family functions and special gatherings more exciting with vibrant fireworks.'
+                    ],
+
+                    [
+                        'icon' => 'fa-moon',
+                        'color' => '#43a047',
+                        'bg' => 'rgba(67,160,71,0.10)',
+                        'title' => 'Traditional Functions',
+                        'desc' => 'Celebrate meaningful traditions and auspicious occasions with a beautiful range of crackers.'
+                    ],
+
+                    [
+                        'icon' => 'fa-trophy',
+                        'color' => '#f4511e',
+                        'bg' => 'rgba(244,81,30,0.10)',
+                        'title' => 'Victory Celebrations',
+                        'desc' => 'Celebrate achievements, success and memorable milestones with an energetic burst of joy.'
+                    ],
+                ];
+            @endphp
+
+            @foreach($occasions as $occ)
+
+                <div class="col-6 col-md-4 col-lg-2">
+
+                    <a href="{{ route('front.products') }}" class="text-decoration-none">
+
+                        <div class="text-center p-4 rounded-4 h-100 occasion-card" style="
+                                                                                background: {{ $occ['bg'] }};
+                                                                                border: 2px solid {{ $occ['color'] }}22;
+                                                                                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                                                                             ">
+
+                            <!-- Occasion Icon -->
+                            <div class="mb-3" style="
+                                                                                    width: 64px;
+                                                                                    height: 64px;
+                                                                                    background: {{ $occ['bg'] }};
+                                                                                    border-radius: 50%;
+                                                                                    display: flex;
+                                                                                    align-items: center;
+                                                                                    justify-content: center;
+                                                                                    margin: 0 auto;
+                                                                                    border: 2px solid {{ $occ['color'] }}44;
+                                                                                 ">
+
+                                <i class="fas {{ $occ['icon'] }} fa-2x" style="color: {{ $occ['color'] }};">
+                                </i>
+
+                            </div>
+
+                            <!-- Occasion Title -->
+                            <h6 class="fw-bold mb-2" style="color: #1a2233;">
+                                {{ $occ['title'] }}
+                            </h6>
+
+                            <!-- Occasion Description -->
+                            <p class="text-muted mb-0" style="
+                                                                                    font-size: 0.78rem;
+                                                                                    line-height: 1.5;
+                                                                               ">
+                                {{ $occ['desc'] }}
+                            </p>
+
                         </div>
 
-                        {{-- Prev / Next --}}
-                        <button class="carousel-control-prev d-none" id="carouselPrev"
-                                type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </button>
-                        <button class="carousel-control-next d-none" id="carouselNext"
-                                type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </button>
+                    </a>
 
-                        {{-- Dot indicators --}}
-                        <div class="carousel-indicators d-none" id="carouselIndicators">
-                            <button type="button" data-bs-target="#productCarousel"
-                                    data-bs-slide-to="0" class="active" aria-label="Image"></button>
-                            <button type="button" data-bs-target="#productCarousel"
-                                    data-bs-slide-to="1" aria-label="Video"></button>
-                        </div>
-                    </div>
                 </div>
 
-                {{-- Footer --}}
-                <div class="modal-footer border-0 px-4 py-3 justify-content-center"
-                     style="background:#f8fafc;">
-                    <div class="d-flex align-items-center gap-4">
-                        <span class="text-muted text-decoration-line-through fs-6">
-                            MRP: ₹<span id="modalProductMrp"></span>
-                        </span>
-                        <span class="fw-bold text-success" style="font-size:1.4rem;">
-                            Price: ₹<span id="modalProductPrice"></span>
-                        </span>
-                    </div>
-                </div>
+            @endforeach
 
-            </div>
         </div>
     </div>
 
-    {{-- ===== STYLES ===== --}}
     <style>
-        /* The carousel-inner must have a solid dark bg and fixed height */
-        #productModal .carousel-inner {
-            background: #111 !important;
-            min-height: 360px;
-        }
-
-        /*
-           IMPORTANT: Bootstrap sets .carousel-item { display:none }
-           and .carousel-item.active { display:block }
-           DO NOT override display on .carousel-item.
-           Use a wrapper inside each item for centering.
-        */
-        #productModal .slide-wrap {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            min-height: 360px;
-            background: #111;
-        }
-
-        #productModal .slide-wrap img {
-            max-height: 340px;
-            max-width: 100%;
-            object-fit: contain;
-        }
-
-        #productModal .slide-wrap video {
-            max-height: 340px;
-            max-width: 100%;
-            width: 100%;
-            object-fit: contain;
-            background: #000;
-        }
-
-        /* Label badge top-left */
-        #productModal .slide-badge {
-            position: absolute;
-            top: 10px;
-            left: 14px;
-            background: rgba(0,0,0,0.6);
-            color: #fff;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            padding: 3px 12px;
-            border-radius: 50px;
-            z-index: 10;
+        .occasion-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.10);
         }
     </style>
 
-    {{-- ===== JAVASCRIPT ===== --}}
-    <script>
-    function showProductCarousel(name, taName, imageUrl, mrp, price, videoUrl) {
+    <!-- ============================================================
+                                         SECTION 2 : HOW IT WORKS
+                                    ============================================================ -->
+    <div class="py-5 my-3" style="background:linear-gradient(135deg,#f8fafc 0%,#fff4df 100%);border-radius:24px;">
 
-        // Fill header & price
-        document.getElementById('productModalLabel').innerText  = name;
-        document.getElementById('modalProductTaName').innerText = taName || '';
-        document.getElementById('modalProductMrp').innerText    = mrp;
-        document.getElementById('modalProductPrice').innerText  = price;
+        <div class="section-title-wrapper text-center mb-5">
+            <h2 class="section-title">From Selection to Celebration</h2>
 
-        const inner      = document.getElementById('carouselInner');
-        const indicators = document.getElementById('carouselIndicators');
-        const prevBtn    = document.getElementById('carouselPrev');
-        const nextBtn    = document.getElementById('carouselNext');
-        const carouselEl = document.getElementById('productCarousel');
+            <div class="title-underline mx-auto"></div>
 
-        // Pause & reset any existing video/iframe
-        inner.querySelectorAll('video').forEach(function(v){ v.pause(); v.currentTime = 0; });
-        inner.querySelectorAll('iframe').forEach(function(f){
-            try { f.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); } catch(e){}
-        });
+            <p class="text-muted mt-3">
+                Get your celebration-ready fireworks with a simple and hassle-free ordering experience
+            </p>
+        </div>
 
-        // Clear slides
-        inner.innerHTML = '';
+        <div class="row g-4 px-3 justify-content-center">
 
-        const hasVideo = videoUrl && videoUrl.trim() !== '';
+            @php
+                $steps = [
+                    [
+                        'step' => '01',
+                        'icon' => 'fa-th-large',
+                        'color' => '#0d6b8a',
+                        'title' => 'Explore Our Collection',
+                        'desc' => 'Discover a wide selection of colourful crackers, family packs, gift boxes and celebration specials.'
+                    ],
 
-        if (hasVideo) {
-            // -- Detect YouTube links --
-            let isYouTube = false;
-            let youtubeWatchUrl = videoUrl; // original URL for opening in YT
-            let videoId = '';
+                    [
+                        'step' => '02',
+                        'icon' => 'fa-shopping-basket',
+                        'color' => '#ff9900',
+                        'title' => 'Choose Your Favourites',
+                        'desc' => 'Pick the crackers you love, select the required quantity and add them to your shopping cart.'
+                    ],
 
-            if (videoUrl.includes('youtube.com/shorts/')) {
-                videoId = videoUrl.split('shorts/')[1].split('?')[0];
-                isYouTube = true;
-                youtubeWatchUrl = 'https://www.youtube.com/shorts/' + videoId;
-            } else if (videoUrl.includes('youtube.com/watch')) {
-                try { videoId = new URL(videoUrl).searchParams.get('v'); } catch(e){}
-                isYouTube = true;
-                youtubeWatchUrl = 'https://www.youtube.com/watch?v=' + videoId;
-            } else if (videoUrl.includes('youtu.be/')) {
-                videoId = videoUrl.split('youtu.be/')[1].split('?')[0];
-                isYouTube = true;
-                youtubeWatchUrl = 'https://www.youtube.com/watch?v=' + videoId;
-            }
+                    [
+                        'step' => '03',
+                        'icon' => 'fa-home',
+                        'color' => '#e91e63',
+                        'title' => 'Share Delivery Details',
+                        'desc' => 'Enter your contact and delivery information so we can prepare your order for convenient delivery.'
+                    ],
 
-            if (isYouTube && videoId) {
-                // YouTube: embed inline using privacy-enhanced nocookie domain (bypasses many embed restrictions)
-                const embedUrl = 'https://www.youtube-nocookie.com/embed/' + videoId + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&fs=1';
-                const vidSlide = document.createElement('div');
-                vidSlide.className = 'carousel-item active position-relative';
-                vidSlide.innerHTML = `
-                    <div class="slide-wrap" style="position:relative;">
-                        <iframe id="modalVideoIframe"
-                            src="${embedUrl}"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                            allowfullscreen
-                            sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-forms"
-                            style="width:100%;height:380px;background:#000;display:block;">
-                        </iframe>
-                        <div style="position:absolute;bottom:8px;right:12px;">
-                            <a href="${youtubeWatchUrl}" target="_blank" style="color:#ccc;font-size:11px;text-decoration:none;background:rgba(0,0,0,0.6);padding:3px 8px;border-radius:4px;">
-                                ▶ Watch on YouTube
-                            </a>
+                    [
+                        'step' => '04',
+                        'icon' => 'fa-gift',
+                        'color' => '#4caf50',
+                        'title' => 'Get Ready to Celebrate',
+                        'desc' => 'Your order is carefully prepared and dispatched so you can enjoy your special celebration with confidence.'
+                    ],
+                ];
+            @endphp
+
+            @foreach($steps as $i => $step)
+
+                <div class="col-12 col-md-6 col-lg-3">
+
+                    <div class="d-flex flex-column align-items-center text-center position-relative p-4">
+
+                        <!-- Connector Line -->
+                        @if($i < 3)
+
+                            <div class="d-none d-lg-block position-absolute" style="
+                                                                                            top:40px;
+                                                                                            right:-30px;
+                                                                                            width:60px;
+                                                                                            height:3px;
+                                                                                            background:linear-gradient(
+                                                                                                90deg,
+                                                                                                {{ $step['color'] }},
+                                                                                                {{ $steps[$i + 1]['color'] }}
+                                                                                            );
+                                                                                            border-radius:2px;
+                                                                                            z-index:1;
+                                                                                         ">
+                            </div>
+
+                        @endif
+
+                        <!-- Step Icon -->
+                        <div style="
+                                                                width:80px;
+                                                                height:80px;
+                                                                border-radius:50%;
+                                                                background:{{ $step['color'] }};
+                                                                display:flex;
+                                                                align-items:center;
+                                                                justify-content:center;
+                                                                box-shadow:0 8px 25px {{ $step['color'] }}44;
+                                                                margin-bottom:16px;
+                                                                position:relative;
+                                                                z-index:2;
+                                                            ">
+
+                            <i class="fas {{ $step['icon'] }} fa-2x text-white"></i>
+
+                            <!-- Step Number -->
+                            <span style="
+                                                                    position:absolute;
+                                                                    top:-8px;
+                                                                    right:-8px;
+                                                                    background:#fff;
+                                                                    color:{{ $step['color'] }};
+                                                                    font-size:0.7rem;
+                                                                    font-weight:900;
+                                                                    width:26px;
+                                                                    height:26px;
+                                                                    border-radius:50%;
+                                                                    display:flex;
+                                                                    align-items:center;
+                                                                    justify-content:center;
+                                                                    border:2px solid {{ $step['color'] }};
+                                                                    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+                                                                ">
+                                {{ $step['step'] }}
+                            </span>
+
                         </div>
-                    </div>`;
-                inner.appendChild(vidSlide);
-            } else {
-                // Local video file — embed directly
-                const vidSlide = document.createElement('div');
-                vidSlide.className = 'carousel-item active position-relative';
-                vidSlide.innerHTML = '<div class="slide-wrap"><video id="modalVideo" src="' + videoUrl + '" controls playsinline preload="metadata" style="max-height:340px;max-width:100%;width:100%;object-fit:contain;background:#000;" autoplay></video></div>';
-                inner.appendChild(vidSlide);
-            }
 
-            // Slide 1: IMAGE
-            const imgSlide = document.createElement('div');
-            imgSlide.className = 'carousel-item position-relative';
-            imgSlide.innerHTML = '<div class="slide-wrap"><img src="' + imageUrl + '" alt="' + name.replace(/"/g, '&quot;') + '"></div>';
-            inner.appendChild(imgSlide);
+                        <!-- Step Title -->
+                        <h6 class="fw-bold mb-2" style="
+                                                                    color:#1a2233;
+                                                                    font-size:1rem;
+                                                                ">
+                            {{ $step['title'] }}
+                        </h6>
 
-            // Show nav controls
-            indicators.classList.remove('d-none');
-            prevBtn.classList.remove('d-none');
-            nextBtn.classList.remove('d-none');
+                        <!-- Step Description -->
+                        <p class="text-muted mb-0" style="
+                                                                    font-size:0.85rem;
+                                                                    line-height:1.6;
+                                                               ">
+                            {{ $step['desc'] }}
+                        </p>
 
-            // Pause local video on slide change
-            carouselEl.addEventListener('slid.bs.carousel', function(e) {
-                var vid = document.getElementById('modalVideo');
-                if (e.to === 0) {
-                    if (vid) vid.play().catch(function(){});
-                } else {
-                    if (vid) vid.pause();
-                }
-            });
+                    </div>
 
-        } else {
-            // No video — only image slide
-            const imgSlide = document.createElement('div');
-            imgSlide.className = 'carousel-item active position-relative';
-            imgSlide.innerHTML = '<div class="slide-wrap"><img src="' + imageUrl + '" alt="' + name.replace(/"/g, '&quot;') + '"></div>';
-            inner.appendChild(imgSlide);
+                </div>
 
-            // Hide nav controls
-            indicators.classList.add('d-none');
-            prevBtn.classList.add('d-none');
-            nextBtn.classList.add('d-none');
+            @endforeach
+
+        </div>
+    </div>
+
+    <!-- ============================================================
+                                         SECTION 3 : WHY FAMILIES CHOOSE US
+                                    ============================================================ -->
+    <div class="py-5 my-5">
+
+        <div class="section-title-wrapper text-center mb-5">
+            <h2 class="section-title">The Difference You Can Feel</h2>
+
+            <div class="title-underline mx-auto"></div>
+
+            <p class="text-muted mt-3">
+                Everything you need for a memorable celebration, from exciting crackers to dependable service
+            </p>
+        </div>
+
+        <div class="row g-4">
+
+            @php
+                $reasons = [
+
+                    [
+                        'icon' => 'fa-certificate',
+                        'color' => '#0d6b8a',
+                        'title' => 'Quality You Can Trust',
+                        'desc' => 'We carefully select our products from reliable manufacturers so you can enjoy consistent quality during every celebration.'
+                    ],
+
+                    [
+                        'icon' => 'fa-tags',
+                        'color' => '#ff9900',
+                        'title' => 'Celebration-Friendly Prices',
+                        'desc' => 'Enjoy attractive prices across our collection, with value-packed options for both small celebrations and large gatherings.'
+                    ],
+
+                    [
+                        'icon' => 'fa-shipping-fast',
+                        'color' => '#4caf50',
+                        'title' => 'Convenient Delivery',
+                        'desc' => 'Place your order online and we make the process simple from packing to dispatch, helping your celebration preparations stay stress-free.'
+                    ],
+
+                    [
+                        'icon' => 'fa-gifts',
+                        'color' => '#e91e63',
+                        'title' => 'Special Celebration Packs',
+                        'desc' => 'Choose from thoughtfully arranged combo packs and gift-ready selections created for families, friends and special occasions.'
+                    ],
+
+                    [
+                        'icon' => 'fa-comments',
+                        'color' => '#9c27b0',
+                        'title' => 'Friendly Assistance',
+                        'desc' => 'Need help choosing products or placing an order? Our team is ready to assist you with your questions and requirements.'
+                    ],
+
+                    [
+                        'icon' => 'fa-leaf',
+                        'color' => '#00a896',
+                        'title' => 'Greener Choices',
+                        'desc' => 'Explore available green-cracker options and make thoughtful choices while enjoying the excitement of your celebration.'
+                    ],
+
+                    [
+                        'icon' => 'fa-credit-card',
+                        'color' => '#ff5722',
+                        'title' => 'Easy Payment Options',
+                        'desc' => 'Complete your purchase conveniently with the payment methods available on our website for a smooth checkout experience.'
+                    ],
+
+                    [
+                        'icon' => 'fa-users',
+                        'color' => '#f44336',
+                        'title' => 'Made for Every Celebration',
+                        'desc' => 'Whether it is a family function, festival, wedding or special milestone, our collection is designed to add more joy to the occasion.'
+                    ],
+
+                ];
+            @endphp
+
+            @foreach($reasons as $r)
+
+                <div class="col-12 col-sm-6 col-lg-3">
+
+                    <div class="p-4 rounded-4 h-100 why-card" style="
+                                                background:#fff;
+                                                border:1px solid #e8f0f5;
+                                                transition:all 0.3s ease;
+                                                box-shadow:0 2px 15px rgba(0,0,0,0.05);
+                                             ">
+
+                        <!-- Icon -->
+                        <div style="
+                                                width:54px;
+                                                height:54px;
+                                                background:{{ $r['color'] }}18;
+                                                border-radius:14px;
+                                                display:flex;
+                                                align-items:center;
+                                                justify-content:center;
+                                                margin-bottom:16px;
+                                            ">
+
+                            <i class="fas {{ $r['icon'] }}" style="
+                                                        font-size:1.4rem;
+                                                        color:{{ $r['color'] }};
+                                                   ">
+                            </i>
+
+                        </div>
+
+                        <!-- Title -->
+                        <h6 class="fw-bold mb-2" style="
+                                                    color:#1a2233;
+                                                    font-size:0.95rem;
+                                                ">
+                            {{ $r['title'] }}
+                        </h6>
+
+                        <!-- Description -->
+                        <p class="text-muted mb-0" style="
+                                                    font-size:0.82rem;
+                                                    line-height:1.6;
+                                               ">
+                            {{ $r['desc'] }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            @endforeach
+
+        </div>
+    </div>
+
+    <style>
+        .why-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.10) !important;
         }
+    </style>
+    <!-- ============================================================
+                                         SECTION 4 : CLIENT REVIEWS CAROUSEL
+                                    ============================================================ -->
+    <div class="py-5 my-3"
+        style="background:linear-gradient(135deg,#0d6b8a 0%,#163b5c 100%);border-radius:24px;overflow:hidden;">
 
-        // Reset to slide 0
-        const bsCarousel = bootstrap.Carousel.getOrCreateInstance(carouselEl, { ride: false, wrap: true, touch: true });
-        bsCarousel.to(0);
+        <!-- Section Heading -->
+        <div class="section-title-wrapper text-center mb-5">
 
-        // Stop video/iframe when modal closes
-        const modalEl = document.getElementById('productModal');
-        modalEl.addEventListener('hidden.bs.modal', function stopOnClose() {
-            var vid = document.getElementById('modalVideo');
-            if (vid) { vid.pause(); vid.currentTime = 0; }
-            var fr = document.getElementById('modalVideoIframe');
-            if (fr) fr.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-            modalEl.removeEventListener('hidden.bs.modal', stopOnClose);
-        });
+            <h2 style="
+                    font-size:2.2rem;
+                    font-weight:900;
+                    color:#fff;
+                    margin-bottom:5px;
+                    text-transform:uppercase;
+                    letter-spacing:1px;
+                ">
+                Celebrations Loved by Our Customers
+            </h2>
 
-        // Show modal
-        bootstrap.Modal.getOrCreateInstance(modalEl).show();
-    }
+            <div class="title-underline mx-auto"></div>
 
-    // Client-side Product Live Search Filter
-    document.addEventListener("DOMContentLoaded", function () {
-        const searchInput = document.getElementById('productSearchInput');
-        const clearBtn = document.getElementById('clearSearchBtn');
-        if (!searchInput) return;
+            <p class="mt-3" style="color:rgba(255,255,255,0.75);">
+                Hear what our customers have to share about their shopping experience
+            </p>
 
-        searchInput.addEventListener('input', function () {
-            const query = searchInput.value.toLowerCase().trim();
-            
-            if (query.length > 0) {
-                clearBtn.style.display = 'block';
-            } else {
-                clearBtn.style.display = 'none';
-            }
+        </div>
 
-            // Loop through each category table and row
-            const headers = document.querySelectorAll('.category-header');
-            headers.forEach(header => {
-                const tableContainer = header.nextElementSibling;
-                if (!tableContainer || !tableContainer.classList.contains('table-responsive')) return;
 
-                const rows = tableContainer.querySelectorAll('.product-row');
-                let visibleRowsCount = 0;
+        @php
+            $reviews = [
 
-                rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    if (text.includes(query)) {
-                        row.style.display = '';
-                        visibleRowsCount++;
-                    } else {
-                        row.style.display = 'none';
+                [
+                    'name' => 'Meena S.',
+                    'city' => 'Chennai',
+                    'stars' => 5,
+                    'avatar' => 'MS',
+                    'color' => '#ff9900',
+                    'text' => 'The ordering process was very simple and the product selection was excellent. Everything was packed neatly and arrived ready for our family celebration.'
+                ],
+
+                [
+                    'name' => 'Arun Prakash',
+                    'city' => 'Coimbatore',
+                    'stars' => 5,
+                    'avatar' => 'AP',
+                    'color' => '#e91e63',
+                    'text' => 'I liked the variety of crackers available on the website. It was easy to compare products, select quantities and complete my order without any confusion.'
+                ],
+
+                [
+                    'name' => 'Deepa R.',
+                    'city' => 'Madurai',
+                    'stars' => 5,
+                    'avatar' => 'DR',
+                    'color' => '#4caf50',
+                    'text' => 'Bought a combination of crackers for our family function. The products were well packed and the overall shopping experience was smooth from start to finish.'
+                ],
+
+                [
+                    'name' => 'Vignesh Kumar',
+                    'city' => 'Salem',
+                    'stars' => 4,
+                    'avatar' => 'VK',
+                    'color' => '#9c27b0',
+                    'text' => 'Good collection with plenty of options for different budgets. I especially liked the combo selections because they made choosing products much easier.'
+                ],
+
+                [
+                    'name' => 'Nandhini M.',
+                    'city' => 'Trichy',
+                    'stars' => 5,
+                    'avatar' => 'NM',
+                    'color' => '#00bcd4',
+                    'text' => 'The website is clean and easy to navigate. I found the products I was looking for quickly and the checkout process was straightforward.'
+                ],
+
+                [
+                    'name' => 'Karthik R.',
+                    'city' => 'Krishnagiri',
+                    'stars' => 5,
+                    'avatar' => 'KR',
+                    'color' => '#ff5722',
+                    'text' => 'A convenient way to prepare for celebrations. The product details were easy to understand and the overall experience was comfortable and hassle-free.'
+                ],
+
+            ];
+
+            // Split reviews into slides of 3
+            $slides = array_chunk($reviews, 3);
+        @endphp
+
+
+        <!-- Reviews Carousel -->
+        <div id="reviewsCarousel" class="carousel slide px-3 px-md-4" data-bs-ride="carousel" data-bs-interval="4500">
+
+
+            <!-- Carousel Indicators -->
+            <div class="carousel-indicators" style="bottom:-10px;">
+
+                @foreach($slides as $idx => $slide)
+
+                    <button type="button" data-bs-target="#reviewsCarousel" data-bs-slide-to="{{ $idx }}"
+                        class="{{ $idx === 0 ? 'active' : '' }}" style="
+                                width:10px;
+                                height:10px;
+                                border-radius:50%;
+                                background:{{ $idx === 0 ? '#ffcc00' : 'rgba(255,255,255,0.4)' }};
+                                border:none;
+                                margin:0 5px;
+                            ">
+                    </button>
+
+                @endforeach
+
+            </div>
+
+
+            <!-- Carousel Slides -->
+            <div class="carousel-inner pb-5">
+
+                @foreach($slides as $idx => $slide)
+
+                    <div class="carousel-item {{ $idx === 0 ? 'active' : '' }}">
+
+                        <div class="row g-4">
+
+                            @foreach($slide as $rev)
+
+                                <div class="col-12 col-md-4">
+
+                                    <div class="p-4 rounded-4 h-100" style="
+                                                    background:rgba(255,255,255,0.09);
+                                                    backdrop-filter:blur(10px);
+                                                    border:1px solid rgba(255,255,255,0.18);
+                                                    min-height:250px;
+                                                ">
+
+                                        <!-- Rating -->
+                                        <div class="mb-3">
+
+                                            @for($s = 1; $s <= 5; $s++)
+
+                                                <i class="fas fa-star" style="
+                                                                    color:{{ $s <= $rev['stars'] ? '#ffcc00' : 'rgba(255,255,255,0.2)' }};
+                                                                    font-size:0.88rem;
+                                                                ">
+                                                </i>
+
+                                            @endfor
+
+                                        </div>
+
+
+                                        <!-- Review -->
+                                        <p style="
+                                                        color:rgba(255,255,255,0.88);
+                                                        font-size:0.88rem;
+                                                        line-height:1.7;
+                                                        margin-bottom:20px;
+                                                    ">
+                                            "{{ $rev['text'] }}"
+                                        </p>
+
+
+                                        <!-- Customer Details -->
+                                        <div class="d-flex align-items-center gap-3 mt-auto">
+
+                                            <!-- Avatar -->
+                                            <div style="
+                                                            width:44px;
+                                                            height:44px;
+                                                            border-radius:50%;
+                                                            background:{{ $rev['color'] }};
+                                                            display:flex;
+                                                            align-items:center;
+                                                            justify-content:center;
+                                                            font-weight:900;
+                                                            color:#fff;
+                                                            font-size:0.82rem;
+                                                            flex-shrink:0;
+                                                        ">
+                                                {{ $rev['avatar'] }}
+                                            </div>
+
+
+                                            <!-- Name & Location -->
+                                            <div>
+
+                                                <div style="
+                                                                color:#fff;
+                                                                font-weight:700;
+                                                                font-size:0.88rem;
+                                                            ">
+                                                    {{ $rev['name'] }}
+                                                </div>
+
+                                                <div style="
+                                                                color:rgba(255,255,255,0.5);
+                                                                font-size:0.75rem;
+                                                            ">
+
+                                                    <i class="fas fa-map-marker-alt me-1"></i>
+
+                                                    {{ $rev['city'] }}, Tamil Nadu
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            @endforeach
+
+                        </div>
+
+                    </div>
+
+                @endforeach
+
+            </div>
+
+
+            <!-- Previous Button -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#reviewsCarousel" data-bs-slide="prev"
+                style="
+                    width:44px;
+                    height:44px;
+                    background:rgba(255,255,255,0.15);
+                    border-radius:50%;
+                    top:50%;
+                    transform:translateY(-50%);
+                    left:6px;
+                    border:1px solid rgba(255,255,255,0.25);
+                ">
+
+                <i class="fas fa-chevron-left" style="
+                        color:#fff;
+                        font-size:14px;
+                    ">
+                </i>
+
+                <span class="visually-hidden">
+                    Previous
+                </span>
+
+            </button>
+
+
+            <!-- Next Button -->
+            <button class="carousel-control-next" type="button" data-bs-target="#reviewsCarousel" data-bs-slide="next"
+                style="
+                    width:44px;
+                    height:44px;
+                    background:rgba(255,255,255,0.15);
+                    border-radius:50%;
+                    top:50%;
+                    transform:translateY(-50%);
+                    right:6px;
+                    border:1px solid rgba(255,255,255,0.25);
+                ">
+
+                <i class="fas fa-chevron-right" style="
+                        color:#fff;
+                        font-size:14px;
+                    ">
+                </i>
+
+                <span class="visually-hidden">
+                    Next
+                </span>
+
+            </button>
+
+        </div>
+
+
+        <!-- Experience Highlights -->
+        <div class="row g-4 px-3 mt-5 text-center">
+
+            <div class="col-4">
+
+                <div style="
+                        color:#ffcc00;
+                        font-size:2.2rem;
+                        font-weight:900;
+                        line-height:1;
+                    ">
+                    Wide
+                </div>
+
+                <div style="
+                        color:rgba(255,255,255,0.7);
+                        font-size:0.85rem;
+                    ">
+                    Product Selection
+                </div>
+
+            </div>
+
+
+            <div class="col-4">
+
+                <div style="
+                        color:#ffcc00;
+                        font-size:2.2rem;
+                        font-weight:900;
+                        line-height:1;
+                    ">
+                    Easy
+                </div>
+
+                <div style="
+                        color:rgba(255,255,255,0.7);
+                        font-size:0.85rem;
+                    ">
+                    Online Ordering
+                </div>
+
+            </div>
+
+
+            <div class="col-4">
+
+                <div style="
+                        color:#ffcc00;
+                        font-size:2.2rem;
+                        font-weight:900;
+                        line-height:1;
+                    ">
+                    Careful
+                </div>
+
+                <div style="
+                        color:rgba(255,255,255,0.7);
+                        font-size:0.85rem;
+                    ">
+                    Product Packing
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="text-center py-5 my-4"
+        style="background: linear-gradient(135deg, #0d6b8a 0%, #1a8ab0 100%); border-radius: 20px; box-shadow: 0 10px 40px rgba(13,107,138,0.2);">
+        <i class="fas fa-fire fa-3x mb-3" style="color:#ff9900;"></i>
+        <h3 class="fw-bold text-white mb-2">Explore Our Full Product Range</h3>
+        <p class="text-white mb-4" style="opacity:0.85;">Browse all categories, search by name or code, and add directly to
+            your cart.</p>
+        <a href="{{ route('front.products') }}" class="btn btn-lg rounded-pill px-5 fw-bold"
+            style="background: linear-gradient(135deg,#ff9900,#ff3b3b); color:#fff; box-shadow: 0 4px 20px rgba(255,153,0,0.4); font-size:1.1rem;">
+            <i class="fas fa-shopping-bag me-2"></i> View All Products
+        </a>
+    </div>
+
+
+
+
+
+
+
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Category Search Logic
+                const catSearchInput = document.getElementById('categorySearchInput');
+                const catClearBtn = document.getElementById('clearCategorySearchBtn');
+                const catCards = document.querySelectorAll('.category-card');
+                const catNoMsg = document.getElementById('noCategoriesMsg');
+
+                if (catSearchInput && catCards.length > 0) {
+                    catSearchInput.addEventListener('keyup', function () {
+                        const term = this.value.toLowerCase().trim();
+                        let hasVisible = false;
+
+                        catClearBtn.style.display = term.length > 0 ? 'block' : 'none';
+
+                        catCards.forEach(card => {
+                            const name = card.querySelector('.category-card-name').textContent.toLowerCase();
+                            if (name.includes(term)) {
+                                card.style.display = 'block';
+                                hasVisible = true;
+                            } else {
+                                card.style.display = 'none';
+                            }
+                        });
+
+                        if (catNoMsg) {
+                            catNoMsg.style.display = hasVisible ? 'none' : 'block';
+                        }
+                    });
+
+                    if (catClearBtn) {
+                        catClearBtn.addEventListener('click', function () {
+                            catSearchInput.value = '';
+                            catSearchInput.dispatchEvent(new Event('keyup'));
+                            catSearchInput.focus();
+                        });
                     }
-                });
-
-                if (visibleRowsCount > 0) {
-                    header.style.display = '';
-                    tableContainer.style.display = '';
-                } else {
-                    header.style.display = 'none';
-                    tableContainer.style.display = 'none';
                 }
             });
-        });
-
-        clearBtn.addEventListener('click', function () {
-            searchInput.value = '';
-            searchInput.dispatchEvent(new Event('input'));
-        });
-    });
-    </script>
-
+        </script>
+    @endpush
 @endsection

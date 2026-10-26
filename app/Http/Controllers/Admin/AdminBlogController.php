@@ -12,9 +12,19 @@ class AdminBlogController extends Controller
     /**
      * Display a listing of the blogs.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $blogs = Blog::latest('updated_at')->paginate(15);
+        $query = Blog::latest('updated_at');
+
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('content', 'like', "%{$search}%")
+                  ->orWhere('excerpt', 'like', "%{$search}%");
+            });
+        }
+
+        $blogs = $query->paginate(15)->appends($request->only('search'));
         return view('admin.blogs.index', compact('blogs'));
     }
 
@@ -35,7 +45,6 @@ class AdminBlogController extends Controller
             'title'        => 'required|string|max:255',
             'content'      => 'required|string',
             'excerpt'      => 'nullable|string|max:500',
-            'category'     => 'required|string|max:100',
             'image'        => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'published_at' => 'nullable|date',
         ]);
@@ -96,7 +105,6 @@ class AdminBlogController extends Controller
             'title'        => 'required|string|max:255',
             'content'      => 'required|string',
             'excerpt'      => 'nullable|string|max:500',
-            'category'     => 'required|string|max:100',
             'image'        => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'published_at' => 'nullable|date',
         ]);

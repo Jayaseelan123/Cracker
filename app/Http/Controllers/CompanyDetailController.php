@@ -29,6 +29,7 @@ class CompanyDetailController extends Controller
             'contact_number'  => 'required|string|max:20',
             'whatsapp_number' => 'required|string|max:20',
             'logo'            => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            'favicon'         => 'nullable|image|mimes:ico,png,jpg,jpeg,webp,svg|max:512',
             'bank_ac_no'      => 'nullable|string|max:50',
             'bank_ac_name'    => 'nullable|string|max:255',
             'bank_ac_type'    => 'nullable|string|max:50',
@@ -58,6 +59,23 @@ class CompanyDetailController extends Controller
             $filename = time() . '_logo.' . $file->getClientOriginalExtension();
             $file->move($uploadDir, $filename);
             $data['logo'] = 'images/company/' . $filename;
+        }
+
+        // Handle favicon upload
+        if ($request->hasFile('favicon')) {
+            $uploadDir = public_path('images/company');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            // Delete old favicon
+            if ($company->favicon && file_exists(public_path($company->favicon))) {
+                @unlink(public_path($company->favicon));
+            }
+            
+            $file = $request->file('favicon');
+            $filename = time() . '_favicon.' . $file->getClientOriginalExtension();
+            $file->move($uploadDir, $filename);
+            $data['favicon'] = 'images/company/' . $filename;
         }
 
         $company->update($data);

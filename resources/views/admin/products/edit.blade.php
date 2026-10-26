@@ -19,7 +19,14 @@
 <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
+
     <p class="text-muted small mb-3">Note: <span class="text-danger fw-bold">*</span> Required fields</p>
+    <div class="mb-3">
+        <label class="form-label">Product ID <span class="text-danger">*</span></label>
+        <input type="text" name="product_id" class="form-control" value="{{ old('product_id', $product->product_id) }}" placeholder="e.g. CKR-0001" required>
+        <div class="form-text text-muted">You may update the Product ID. Must remain unique across all products.</div>
+    </div>
+
     <div class="row">
         <div class="col-md-6">
             <div class="mb-3">
@@ -29,6 +36,10 @@
             <div class="mb-3">
                 <label class="form-label">Name (TA)</label>
                 <input type="text" name="name_ta" class="form-control" value="{{ old('name_ta', $product->name_ta) }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Content</label>
+                <textarea name="content" class="form-control" rows="4" placeholder="Enter product details/content here">{{ old('content', $product->content ?? '') }}</textarea>
             </div>
             <div class="mb-3">
                 <label class="form-label">Category <span class="text-danger">*</span></label>
@@ -67,9 +78,12 @@
             <div class="mb-3">
                 <label class="form-label">Image</label>
                 @if($product->image)
-                    <div class="mb-2"><img src="{{ asset('product_images/'.$product->image) }}" width="80" class="rounded border"></div>
+                    <div class="mb-2"><img src="{{ asset('product_images/'.$product->image) }}" width="80" class="rounded border" id="currentImage"></div>
                 @endif
-                <input type="file" name="image" class="form-control" accept="image/*">
+                <input type="file" name="image" id="imageInput" class="form-control" accept="image/*">
+                <div class="mt-2">
+                    <img id="imagePreview" src="" alt="Preview" style="display:none; max-width:80px; border-radius:6px; border:1px solid #ddd; padding:2px;">
+                </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">
@@ -144,6 +158,29 @@
         
         // Run once on load to sync values
         calculateFinalPrice();
+
+        // Image Preview
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const currentImage = document.getElementById('currentImage');
+        if(imageInput) {
+            imageInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                        if(currentImage) currentImage.style.display = 'none';
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreview.src = '';
+                    imagePreview.style.display = 'none';
+                    if(currentImage) currentImage.style.display = 'block';
+                }
+            });
+        }
     });
 </script>
 @endpush

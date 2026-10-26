@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'CrackerTime')</title>
+    @php $__companyFavicon = \App\Models\CompanyDetail::first(); @endphp
+    @if($__companyFavicon && $__companyFavicon->favicon)
+        <link rel="icon" href="{{ asset($__companyFavicon->favicon) }}">
+    @endif
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -21,7 +25,8 @@
 
         /* ---------------- HEADER ---------------- */
         .top-header {
-            background: rgba(13, 107, 138, 0.95); /* Deep teal glass */
+            background: rgba(13, 107, 138, 0.95);
+            /* Deep teal glass */
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -103,7 +108,7 @@
             box-shadow: 0 4px 15px rgba(255, 59, 59, 0.3);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        
+
         .cart-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(255, 59, 59, 0.4);
@@ -202,16 +207,36 @@
 
         /* ================= MOBILE ================= */
         @media screen and (max-width: 768px) {
-            .hero-banner { height: 350px; }
-            .hero-banner h1 { font-size: 2.2rem; }
-            .hero-banner p { font-size: 1.1rem; }
+            .hero-banner {
+                height: 350px;
+            }
+
+            .hero-banner h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero-banner p {
+                font-size: 1.1rem;
+            }
         }
     </style>
 
     @stack('head')
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-PC8T27KQ');</script>
+    <!-- End Google Tag Manager -->
 </head>
 
 <body>
+    
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PC8T27KQ"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
     @php $__companyHeader = \App\Models\CompanyDetail::first(); @endphp
 
@@ -222,8 +247,7 @@
             @if($__companyHeader && $__companyHeader->logo)
                 <a href="{{ url('/') }}" style="line-height:0;">
                     <img src="{{ asset($__companyHeader->logo) }}"
-                         alt="{{ $__companyHeader->company_name ?? 'CrackerTime' }}"
-                         class="header-logo-img">
+                        alt="{{ $__companyHeader->company_name ?? 'CrackerTime' }}" class="header-logo-img">
                 </a>
             @else
                 <div class="fw-bold logo-text">{{ $__companyHeader->company_name ?? 'CRACKERTIME' }}</div>
@@ -231,14 +255,16 @@
 
             <!-- Desktop Nav -->
             <div class="d-none d-lg-block ms-auto me-4">
-                <a href="{{ url('/') }}">Home</a>
-                <a href="{{ url('/about') }}">About</a>
-                <a href="{{ url('/blog') }}">Blog</a>
-                <a href="{{ url('/contact') }}">Contact</a>
+                <a href="{{ route('home') }}">Home</a>
+                <a href="{{ url('/about') }}">About us</a>
+                <a href="{{ route('front.products') }}">Products</a>
+                <!-- <a href="{{ url('/blog') }}">Blog</a> -->
+                <a href="{{ url('/contact') }}">Contact us </a>
                 @if(\App\Models\SiteSetting::bool('show_pricelist_download', true))
-                <a href="{{ route('download.products') }}" class="btn rounded-pill ms-2" style="background-color: #ff9900; color: #fff !important; padding: 6px 16px; font-weight: 600; font-size: 14px; text-decoration: none;">
-                    <i class="fas fa-download me-1"></i> Products List
-                </a>
+                    <a href="{{ route('download.products') }}" class="btn rounded-pill ms-2"
+                        style="background-color: #ff9900; color: #fff !important; padding: 6px 16px; font-weight: 600; font-size: 14px; text-decoration: none;">
+                        <i class="fas fa-download me-1"></i> Products List
+                    </a>
                 @endif
             </div>
 
@@ -254,16 +280,18 @@
     <!-- Mobile Menu Container -->
     <div class="mobile-menu-container d-lg-none" id="mobileMenuContainer">
         <div class="mobile-menu-nav">
-            <a href="{{ url('/') }}">Home</a>
-            <a href="{{ url('/about') }}">About</a>
-            <a href="{{ url('/blog') }}">Blog</a>
-            <a href="{{ url('/contact') }}">Contact</a>
+            <a href="{{ route('home') }}">Home</a>
+            <a href="{{ url('/about') }}">About us</a>
+            <a href="{{ route('front.products') }}">Products</a>
+            <!-- <a href="{{ url('/blog') }}">Blog</a> -->
+            <a href="{{ url('/contact') }}">Contact us </a>
             @if(\App\Models\SiteSetting::bool('show_pricelist_download', true))
-            <div class="p-3">
-                <a href="{{ route('download.products') }}" class="btn w-100 rounded-pill" style="background-color: #ff9900; color: #fff !important; padding: 10px; font-weight: 600; text-align: center; border-bottom: none;">
-                    <i class="fas fa-download me-1"></i> Download Products List
-                </a>
-            </div>
+                <div class="p-3">
+                    <a href="{{ route('download.products') }}" class="btn w-100 rounded-pill"
+                        style="background-color: #ff9900; color: #fff !important; padding: 10px; font-weight: 600; text-align: center; border-bottom: none;">
+                        <i class="fas fa-download me-1"></i> Download Products List
+                    </a>
+                </div>
             @endif
         </div>
     </div>

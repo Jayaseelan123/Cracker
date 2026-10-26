@@ -242,8 +242,8 @@
 </style>
 
 <script>
-// Subtotal from PHP (used for min-order check in JS)
-const cartSubtotal = {{ $subtotal }};
+// Product Total from PHP (used for min-order check in JS)
+const cartProductTotal = {{ $productTotal }};
 
 function updatePackingInfo(sel) {
     const opt = sel.options[sel.selectedIndex];
@@ -261,8 +261,8 @@ function updatePackingInfo(sel) {
 
     if (minOrder > 0) {
         info += 'Min. Order: ₹' + minOrder.toLocaleString('en-IN');
-        if (cartSubtotal < minOrder) {
-            info += ' ⚠️ Your cart (₹' + cartSubtotal.toLocaleString('en-IN') + ') is below minimum.';
+        if (cartProductTotal < minOrder) {
+            info += ' ⚠️ Your cart (₹' + cartProductTotal.toLocaleString('en-IN') + ') is below minimum.';
             box.className = 'alert alert-warning py-2 px-3 small mb-4';
         } else {
             box.className = 'alert alert-success py-2 px-3 small mb-4';
